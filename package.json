@@ -1,6 +1,6 @@
 {
   "name": "mcrscaffolder",
-  "version": "0.0.0-alpha",
+  "version": "0.0.0-alpha.0",
   "description": "",
   "main": "index.ts",
   "type": "module",
@@ -13,13 +13,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "tsx": "^3.12.6",
-    "esbuild": "^0.17.15"
+    "esbuild": "^0.17.15",
+    "tsx": "^3.12.6"
   },
   "files": [
     "src"
   ],
   "dependencies": {
+    "@types/node": "^18.15.11",
     "chalk": "^5.2.0",
     "inquirer": "^9.1.5"
   }
