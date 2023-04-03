@@ -20,8 +20,10 @@
     "src"
   ],
   "dependencies": {
+    "@types/inquirer": "^9.0.3",
     "@types/node": "^18.15.11",
     "chalk": "^5.2.0",
-    "inquirer": "^9.1.5"
+    "inquirer": "^9.1.5",
+    "octokit": "^2.0.14"
   }
 }
