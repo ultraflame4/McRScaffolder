@@ -1,4 +1,9 @@
 #!/usr/bin/env tsx
 
-console.log("Hello world!")
+import chalk from "chalk";
+
+function main_menu() {
+    console.log("McRScaffolder v0.0.0-indev")
+}
+
 
