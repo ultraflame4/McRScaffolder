@@ -12,7 +12,11 @@ It will dynamically create file structure as needed for the various types of res
 For example:
 When you want to create , for example, lets say a diamond sword texture, you do something like:
 
-`mcrs item <insert id for diamond sword>`
+```
+// Insert mcrs cli here
+
+> create item <insert id for diamond sword>
+```
 
 And then it will create the files (and parent folders) needed for the diamond sword texture
 
