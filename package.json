@@ -1,0 +1,26 @@
+{
+  "name": "mcrscaffolder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "build": "esbuild index.ts --outdir=bin --allow-overwrite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tsx": "^3.12.6",
+    "esbuild": "^0.17.15"
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "inquirer": "^9.1.5"
+  }
+}
