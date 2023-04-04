@@ -1,3 +1,10 @@
+export interface McRSConfig{
+    pack_name:string,
+    version_id:string,
+    pack_format:number,
+    summary_download:string
+}
+
 export interface VersionSummary  {
     id: string
     name: string

@@ -5,9 +5,8 @@
   "main": "bin/index.js",
   "type": "module",
   "scripts": {
-    "start": "tsx src/index.ts",
-    "build": "tsx config.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsx src/index.ts ./test",
+    "build": "tsx config.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +22,7 @@
     "@types/inquirer": "^9.0.3",
     "@types/node": "^18.15.11",
     "chalk": "^5.2.0",
+    "commander": "^10.0.0",
     "inquirer": "^9.1.5",
     "octokit": "^2.0.14"
   }

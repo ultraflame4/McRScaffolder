@@ -1,6 +1,7 @@
 import {Octokit} from "octokit";
 import {type VersionSummary} from "./types";
-
+import chalk from "chalk";
+import pkg from "../package.json";
 class MCResourcePath {
     namespace: string
     path: string[]
@@ -45,4 +46,8 @@ export function GetVersionTag(version_id: string, branch: string) {
 export function GetPackSummaryDownload(version_id: string):string {
     let tag_name = GetVersionTag(version_id, "summary");
     return `https://github.com/misode/mcmeta/archive/refs/tags/${tag_name}.zip`
+}
+
+export function PrintVersion() {
+    console.log(chalk.green("McRScaffolder"), chalk.dim(`v${pkg.version}`))
 }

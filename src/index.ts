@@ -1,43 +1,24 @@
 #!/usr/bin/env tsx
-import chalk from "chalk";
 import pkg from "../package.json";
-import inquirer from 'inquirer';
-import {GetPackSummaryDownload, GetPackVersions} from "./tools";
-import ora from 'ora';
+import {program} from "commander";
+import {PrintVersion} from "./tools";
+import path from "path";
+import chalk from "chalk";
 
-function choose_version() {
-    console.log(
-        chalk.green("McRScaffolder") +
-        chalk.dim(` v${pkg.version}`))
-
-    const spinner = ora("Getting versions...")
-    spinner.start()
-    GetPackVersions().then(value => {
-        spinner.stop()
-        return inquirer.prompt({
-            name:"Select Minecraft version intended for the resourcepack",
-            suffix: " The files included can vary even for versions within same pack format",
-            type:"rawlist",
-            default:value.findIndex(x=>x.stable),
-            choices:value.map(x => {
-                return {
-                    name: `${x.name}`,
-                    value: x.id
-                }
-            })
-        })
-    }).then(value => {
-        let downloadLink = GetPackSummaryDownload(value["Select Minecraft version"])
-        console.log(
-            chalk.green("Resolved download link to:"),
-            chalk.underline.cyanBright(downloadLink)
-        )
+PrintVersion()
+program
+    .name(pkg.name)
+    .description(pkg.description)
+    .version(pkg.version)
+    .argument("[project_path]",
+        "Path to the project root where the mcrs.config.json config file is. " +
+        "Will create a new project if the path or the file does not exist.",
+        ".")
+    .action((raw_project_path: string) => {
+        const project_path = path.resolve(raw_project_path);
+        console.log(chalk.whiteBright("Resolved project path to:"),chalk.greenBright(project_path))
     })
 
-}
+program.parse()
 
 
-function start_menu() {
-
-}
-choose_version()
