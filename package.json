@@ -5,8 +5,8 @@
   "main": "bin/index.js",
   "type": "module",
   "scripts": {
-    "start": "tsx index.ts",
-    "build": "esbuild --bundle index.ts --outdir=bin --platform=node --allow-overwrite --format=esm",
+    "start": "tsx src/index.ts",
+    "build": "tsx config.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

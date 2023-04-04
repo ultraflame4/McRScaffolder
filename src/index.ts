@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
 import chalk from "chalk";
-import pkg from "./package.json";
+import pkg from "../package.json";
 import inquirer from 'inquirer';
-import {GetPackSummaryDownload, GetPackVersions} from "./src/tools";
+import {GetPackSummaryDownload, GetPackVersions} from "./tools";
 import ora from 'ora';
 
 function choose_version() {
