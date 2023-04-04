@@ -15,11 +15,13 @@ function choose_version() {
     GetPackVersions().then(value => {
         spinner.stop()
         return inquirer.prompt({
-            name:"Select Minecraft version",
+            name:"Select Minecraft version intended for the resourcepack",
+            suffix: " The files included can vary even for versions within same pack format",
             type:"rawlist",
+            default:value.findIndex(x=>x.stable),
             choices:value.map(x => {
                 return {
-                    name: x.name,
+                    name: `${x.name}`,
                     value: x.id
                 }
             })
@@ -35,4 +37,7 @@ function choose_version() {
 }
 
 
+function start_menu() {
+
+}
 choose_version()
