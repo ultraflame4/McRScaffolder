@@ -1,18 +1,16 @@
 
 import inquirer from "inquirer";
 import chalk from "chalk";
-import pkg from "../package.json";
 import ora from 'ora';
 import {McRSConfig, VersionSummary} from "./types";
-import * as fs from "fs";
-import path from "path";
 import {SaveProjectConfig} from "./configuration";
-import {DownloadResourcePackSummary, GetPackSummaryDownload, GetPackVersions} from "./tools";
+import {DownloadResourcePackSummary, GetPackSummaryDownload, GetPackVersions, ScaffoldBasicComponents} from "./tools";
+
 
 /**
  * Asks the user for the target minecraft version and returns the download link for that version summary
  */
-async function choose_version(): Promise<{ download: string, summary: VersionSummary }> {
+async function choose_version(): Promise<{ download_link: string, version_data: VersionSummary }> {
     const spinner = ora("Getting versions...")
     spinner.start()
     let versions = await GetPackVersions()
@@ -36,23 +34,28 @@ async function choose_version(): Promise<{ download: string, summary: VersionSum
         chalk.underline.cyanBright(downloadLink)
     )
     return {
-        download: downloadLink,
-        summary: answers["version"]
+        download_link: downloadLink,
+        version_data: answers["version"]
     }
 }
 
 
 async function settings_menu(config: McRSConfig, project_root: string) {
-    const answers = await inquirer.prompt({
+    const answer = (await inquirer.prompt({
         name: "Settings",
         type: "list",
         choices: [
             {name: "Download Summary", value: "dlsum"},
+            {name: "See summary", value: "seesum"},
             {name: "Back", value: "back"},
         ]
-    })
+    }))["Settings"]
 
-    if (answers["Settings"] === "back") {
+    if (answer === "back") {
+        return
+    }
+    else if (answer === "seesum") {
+
         return
     }
 
@@ -106,18 +109,19 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
         }
     ])
 
-    const {download, summary} = await choose_version()
+    const {download_link, version_data} = await choose_version()
 
     const new_config: McRSConfig = {
         description: answers.description,
-        pack_format: summary.resource_pack_version,
+        pack_format: version_data.resource_pack_version,
         pack_name: answers.name,
-        summary_download: download,
-        version_id: summary.id
+        summary_download: download_link,
+        version_id: version_data.id
     }
 
     SaveProjectConfig(project_root,new_config)
-    // ScaffoldBasicComponents(project_root,new_config)
+    ScaffoldBasicComponents(project_root,new_config)
+    await DownloadResourcePackSummary(project_root,new_config)
     return new_config
 
 }

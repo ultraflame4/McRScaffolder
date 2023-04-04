@@ -7,6 +7,8 @@ import path from "path";
 import {throws} from "assert";
 import * as http from "http";
 import * as https from "https";
+import yauzl from "yauzl";
+import extract from "extract-zip";
 
 class MCResourcePath {
     namespace: string
@@ -57,7 +59,7 @@ export function GetPackSummaryDownload(version_id: string): string {
 }
 
 export function PrintVersion() {
-    console.log(chalk.green("McRScaffolder"), chalk.dim(`v${pkg.version}`))
+    console.log(chalk.greenBright("McRScaffolder"), chalk.dim(`v${pkg.version}`))
 }
 
 
@@ -73,7 +75,7 @@ export function ScaffoldBasicComponents(project_root: string, config: McRSConfig
         }
     }
     // Create the basic folders & files
-    fs.mkdirSync(path.resolve(resourcepack_root,"assets"))
+    fs.mkdirSync(path.resolve(resourcepack_root,"assets"),{recursive:true})
     fs.writeFileSync(path.resolve(resourcepack_root,"pack.mcmeta"),JSON.stringify(pack_mcmeta,null,3))
 
 }
@@ -90,6 +92,7 @@ export async function DownloadFile(url: string,dest:string):Promise<string> {
             res.pipe(file)
             resolve(dest)
         }).on('error', (e) => {
+            console.error(e)
             reject(e)
         });
     })
@@ -97,12 +100,18 @@ export async function DownloadFile(url: string,dest:string):Promise<string> {
 }
 
 const ResourceDir = ".resources"
+const summary_folder = "summary"
 export async function DownloadResourcePackSummary(project_root:string, config:McRSConfig) {
     const dir_path = path.resolve(project_root,ResourceDir)
+
+
     if (!fs.existsSync(dir_path)){
         fs.mkdirSync(dir_path,{recursive:true})
     }
-    await DownloadFile(config.summary_download,path.resolve(dir_path,"summary.zip"))
+    let dl_path = path.resolve(dir_path,"summary_tmp.zip")
+    await DownloadFile(config.summary_download,dl_path)
+
+    await extract(dl_path,{dir:path.resolve(dir_path,summary_folder)})
+
 
 }
-
