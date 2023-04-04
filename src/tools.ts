@@ -6,6 +6,7 @@ import * as fs from "fs";
 import path from "path";
 import {throws} from "assert";
 import * as http from "http";
+import * as https from "https";
 
 class MCResourcePath {
     namespace: string
@@ -99,7 +100,7 @@ export function ScaffoldBasicComponents(project_root: string, config: McRSConfig
 export async function DownloadFile(url: string,dest:string):Promise<string> {
     const file = fs.createWriteStream(dest);
     return await new Promise((resolve, reject) => {
-        const res = http.get(url,(res)=>{
+        const res = https.get(url,(res)=>{
             res.pipe(file)
             resolve(dest)
         }).on('error', (e) => {
