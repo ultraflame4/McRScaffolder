@@ -1,8 +1,3 @@
-/**
- * This file contains various generic tools used by others.
- * The Project global variable may not been initialised yet. Hence, coed in this file
- * should not use it.
- */
 import {Octokit} from "octokit";
 import {type VersionSummary} from "./types";
 import chalk from "chalk";
