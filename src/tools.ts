@@ -4,12 +4,8 @@ import chalk from "chalk";
 import pkg from "../package.json";
 import * as fs from "fs";
 import path from "path";
-import {throws} from "assert";
-import * as http from "http";
-import * as https from "https";
-import yauzl from "yauzl";
+import download from "download"
 import extract from "extract-zip";
-
 class MCResourcePath {
     namespace: string
     path: string[]
@@ -85,17 +81,9 @@ export function ScaffoldBasicComponents(project_root: string, config: McRSConfig
  * @param url
  * @param dest
  */
-export async function DownloadFile(url: string,dest:string):Promise<string> {
-    const file = fs.createWriteStream(dest);
-    return await new Promise((resolve, reject) => {
-        const res = https.get(url,(res)=>{
-            res.pipe(file)
-            resolve(dest)
-        }).on('error', (e) => {
-            console.error(e)
-            reject(e)
-        });
-    })
+export async function DownloadFile(url: string,dest:string):Promise<void> {
+
+    return fs.writeFileSync(dest, await download(url))
 
 }
 

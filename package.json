@@ -25,6 +25,7 @@
     "@types/yauzl": "^2.10.0",
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
+    "download": "^8.0.0",
     "extract-zip": "^2.0.1",
     "glob": "^9.3.4",
     "inquirer": "^9.1.5",
