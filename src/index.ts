@@ -1,10 +1,11 @@
 #!/usr/bin/env tsx
 import pkg from "../package.json";
 import {program} from "commander";
-import {GetProjectConfig, PrintVersion} from "./tools";
+import {PrintVersion} from "./tools";
 import path from "path";
 import chalk from "chalk";
 import {create_project_menu, start_menu} from "./general_menus";
+import {GetProjectConfig} from "./configuration";
 
 PrintVersion()
 program

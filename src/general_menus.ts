@@ -1,11 +1,4 @@
-import {
-    DownloadFile,
-    DownloadResourcePackSummary,
-    GetConfigPath,
-    GetPackSummaryDownload,
-    GetPackVersions,
-    ScaffoldBasicComponents
-} from "./tools";
+
 import inquirer from "inquirer";
 import chalk from "chalk";
 import pkg from "../package.json";
@@ -13,6 +6,8 @@ import ora from 'ora';
 import {McRSConfig, VersionSummary} from "./types";
 import * as fs from "fs";
 import path from "path";
+import {SaveProjectConfig} from "./configuration";
+import {DownloadResourcePackSummary, GetPackSummaryDownload, GetPackVersions} from "./tools";
 
 /**
  * Asks the user for the target minecraft version and returns the download link for that version summary
@@ -121,8 +116,7 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
         version_id: summary.id
     }
 
-    fs.mkdirSync(project_root, {recursive: true})
-    fs.writeFileSync(GetConfigPath(project_root), JSON.stringify(new_config, null, 3))
+    SaveProjectConfig(project_root,new_config)
     // ScaffoldBasicComponents(project_root,new_config)
     return new_config
 

@@ -25,6 +25,8 @@ class MCResourcePath {
     }
 }
 
+
+
 const octokit = new Octokit({});
 
 /**
@@ -58,22 +60,6 @@ export function PrintVersion() {
     console.log(chalk.green("McRScaffolder"), chalk.dim(`v${pkg.version}`))
 }
 
-export function GetConfigPath(project_root: string) {
-    return path.resolve(project_root, "mcrs.config.json")
-}
-
-/**
- * Finds and returns the project configuration<br>
- * Returns null if it does not exist.<br>
- * @param root_path
- */
-export function GetProjectConfig(root_path: string): McRSConfig | null {
-    const config_path = GetConfigPath(root_path)
-    if (!fs.existsSync(config_path)) {
-        return null
-    }
-    return JSON.parse(fs.readFileSync(config_path, {encoding: 'utf-8'}))
-}
 
 /**
  * Scaffolds and creates the basic file structure for a resource pack
@@ -119,3 +105,4 @@ export async function DownloadResourcePackSummary(project_root:string, config:Mc
     await DownloadFile(config.summary_download,path.resolve(dir_path,"summary.zip"))
 
 }
+
