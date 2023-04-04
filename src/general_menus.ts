@@ -1,37 +1,73 @@
-import {GetPackSummaryDownload, GetPackVersions} from "./tools";
+import {GetConfigPath, GetPackSummaryDownload, GetPackVersions} from "./tools";
 import inquirer from "inquirer";
 import chalk from "chalk";
 import pkg from "../package.json";
 import ora from 'ora';
+import {McRSConfig, VersionSummary} from "./types";
+import * as fs from "fs";
 
-function choose_version() {
+/**
+ * Asks the user for the target minecraft version and returns the download link for that version summary
+ */
+async function choose_version(): Promise<{ download: string, summary: VersionSummary }> {
     const spinner = ora("Getting versions...")
     spinner.start()
-    GetPackVersions().then(value => {
-        spinner.stop()
-        return inquirer.prompt({
-            name: "Select Minecraft version intended for the resourcepack",
-            suffix: " The files included can vary even for versions within same pack format",
-            type: "rawlist",
-            default: value.findIndex(x => x.stable),
-            choices: value.map(x => {
-                return {
-                    name: `${x.name}`,
-                    value: x.id
-                }
-            })
+    let versions = await GetPackVersions()
+    spinner.stop()
+    let answers = await inquirer.prompt({
+        name: "version",
+        message: "Target Minecraft version",
+        type: "rawlist",
+        default: versions.findIndex(x => x.stable),
+        choices: versions.map(x => {
+            return {
+                name: `${x.name}`,
+                value: x
+            }
         })
-    }).then(value => {
-        let downloadLink = GetPackSummaryDownload(value["Select Minecraft version"])
-        console.log(
-            chalk.green("Resolved download link to:"),
-            chalk.underline.cyanBright(downloadLink)
-        )
     })
 
+    let downloadLink = GetPackSummaryDownload(answers["version"].id)
+    console.log(
+        chalk.green("Resolved download link to:"),
+        chalk.underline.cyanBright(downloadLink)
+    )
+    return {
+        download: downloadLink,
+        summary: answers["version"]
+    }
 }
 
 
-function start_menu() {
+export function start_menu() {
+
+}
+
+export async function create_project_menu(project_root: string) {
+    const answers = await inquirer.prompt([
+        {
+            name: "name",
+            message: "Project Name",
+            type: "input"
+        },
+        {
+            name: "description",
+            message: "Description",
+            type: "input"
+        }
+    ])
+
+    const {download, summary} = await choose_version()
+
+    const new_config: McRSConfig = {
+        description: answers.description,
+        pack_format: summary.resource_pack_version,
+        pack_name: answers.name,
+        summary_download: download,
+        version_id: summary.id
+    }
+
+    fs.mkdirSync(project_root,{recursive:true})
+    fs.writeFileSync(GetConfigPath(project_root),JSON.stringify(new_config,null,3))
 
 }
