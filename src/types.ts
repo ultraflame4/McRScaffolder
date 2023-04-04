@@ -1,12 +1,21 @@
-export interface McRSConfig{
-    pack_name:string,
-    description:string,
-    version_id:string,
-    pack_format:number,
-    summary_download:string
+export interface McRSConfig {
+    pack_name: string,
+    description: string,
+    version_id: string,
+    pack_format: number,
+    summary_download: string
 }
 
-export interface VersionSummary  {
+export interface PackMcMeta {
+    pack: {
+        pack_format: number,
+        description: string,
+    }
+    language?: Record<string, { name: string, region: string, bidirectional: boolean }>,
+
+}
+
+export interface VersionSummary {
     id: string
     name: string
     release_target: null | string
@@ -20,4 +29,6 @@ export interface VersionSummary  {
     release_time: string
     sha1: string
 
-}[]
+}
+
+[]
