@@ -65,6 +65,7 @@ async function settings_menu(config: McRSConfig, project_root: string) {
     spinner.start()
     await DownloadResourcePackSummary(project_root, config)
     spinner.stop()
+    console.log(chalk.greenBright("Downloaded resource pack summary data!"))
 }
 
 export async function start_menu(config: McRSConfig, project_root: string) {
