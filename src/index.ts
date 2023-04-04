@@ -4,8 +4,9 @@ import {program} from "commander";
 import {PrintVersion} from "./tools";
 import path from "path";
 import chalk from "chalk";
-import {create_project_menu, start_menu} from "./general_menus";
-import {GetProjectConfig} from "./configuration";
+import {start_menu} from "./general_menus";
+import {Project} from "./project";
+import {create_project_menu} from "./create_project";
 
 PrintVersion()
 program
@@ -20,11 +21,12 @@ program
         const project_path = path.resolve(raw_project_path);
         console.log(chalk.whiteBright("Project root set to:"),chalk.greenBright(project_path))
 
-        let project_config = GetProjectConfig(project_path)
-        if (project_config === null) {
-            project_config = await create_project_menu(project_path)
+
+        if (!Project.Initialise(project_path)) {
+            await create_project_menu(project_path)
         }
-        await start_menu(project_config,project_path)
+
+        await start_menu()
     })
 
 program.parse()

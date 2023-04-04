@@ -1,11 +1,17 @@
+/**
+ * This file contains various generic tools used by others.
+ * The Project global variable may not been initialised yet. Hence, coed in this file
+ * should not use it.
+ */
 import {Octokit} from "octokit";
-import {McRSConfig, PackMcMeta, type VersionSummary} from "./types";
+import {type VersionSummary} from "./types";
 import chalk from "chalk";
 import pkg from "../package.json";
 import * as fs from "fs";
 import path from "path";
 import download from "download"
 import extract from "extract-zip";
+import {Project} from "./project";
 class MCResourcePath {
     namespace: string
     path: string[]
@@ -59,22 +65,7 @@ export function PrintVersion() {
 }
 
 
-/**
- * Scaffolds and creates the basic file structure for a resource pack
- */
-export function ScaffoldBasicComponents(project_root: string, config: McRSConfig) {
-    const resourcepack_root = path.resolve(project_root, config.pack_name)
-    const pack_mcmeta: PackMcMeta = {
-        pack: {
-            description: config.description,
-            pack_format: config.pack_format
-        }
-    }
-    // Create the basic folders & files
-    fs.mkdirSync(path.resolve(resourcepack_root,"assets"),{recursive:true})
-    fs.writeFileSync(path.resolve(resourcepack_root,"pack.mcmeta"),JSON.stringify(pack_mcmeta,null,3))
 
-}
 
 /**
  * Downloads a file from the url
@@ -89,15 +80,15 @@ export async function DownloadFile(url: string,dest:string):Promise<void> {
 
 const ResourceDir = ".resources"
 const summary_folder = "summary"
-export async function DownloadResourcePackSummary(project_root:string, config:McRSConfig) {
-    const dir_path = path.resolve(project_root,ResourceDir)
+export async function DownloadResourcePackSummary() {
+    const dir_path = Project.resolve(ResourceDir)
 
 
     if (!fs.existsSync(dir_path)){
         fs.mkdirSync(dir_path,{recursive:true})
     }
     let dl_path = path.resolve(dir_path,"summary_tmp.zip")
-    await DownloadFile(config.summary_download,dl_path)
+    await DownloadFile(Project.config.summary_download,dl_path)
 
     await extract(dl_path,{dir:path.resolve(dir_path,summary_folder)})
 

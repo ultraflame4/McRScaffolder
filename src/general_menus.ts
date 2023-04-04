@@ -1,46 +1,10 @@
-
 import inquirer from "inquirer";
 import chalk from "chalk";
 import ora from 'ora';
-import {McRSConfig, VersionSummary} from "./types";
-import {SaveProjectConfig} from "./configuration";
-import {DownloadResourcePackSummary, GetPackSummaryDownload, GetPackVersions, ScaffoldBasicComponents} from "./tools";
+import {DownloadResourcePackSummary} from "./tools";
 
 
-/**
- * Asks the user for the target minecraft version and returns the download link for that version summary
- */
-async function choose_version(): Promise<{ download_link: string, version_data: VersionSummary }> {
-    const spinner = ora("Getting versions...")
-    spinner.start()
-    let versions = await GetPackVersions()
-    spinner.stop()
-    let answers = await inquirer.prompt({
-        name: "version",
-        message: "Target Minecraft version",
-        type: "rawlist",
-        default: versions.findIndex(x => x.stable),
-        choices: versions.map(x => {
-            return {
-                name: `${x.name}`,
-                value: x
-            }
-        })
-    })
-
-    let downloadLink = GetPackSummaryDownload(answers["version"].id)
-    console.log(
-        chalk.green("Resolved download link to:"),
-        chalk.underline.cyanBright(downloadLink)
-    )
-    return {
-        download_link: downloadLink,
-        version_data: answers["version"]
-    }
-}
-
-
-async function settings_menu(config: McRSConfig, project_root: string) {
+async function settings_menu() {
     const answer = (await inquirer.prompt({
         name: "Settings",
         type: "list",
@@ -61,12 +25,12 @@ async function settings_menu(config: McRSConfig, project_root: string) {
 
     const spinner = ora("Download resource pack data...")
     spinner.start()
-    await DownloadResourcePackSummary(project_root, config)
+    await DownloadResourcePackSummary()
     spinner.stop()
     console.log(chalk.greenBright("Downloaded resource pack summary data!"))
 }
 
-export async function start_menu(config: McRSConfig, project_root: string) {
+export async function start_menu() {
     let run = true
     while (run) {
         const answers = await inquirer.prompt(
@@ -85,7 +49,7 @@ export async function start_menu(config: McRSConfig, project_root: string) {
             case "new":
                 break;
             case "settings":
-                await settings_menu(config, project_root)
+                await settings_menu()
                 break;
             case "exit":
                 run = false
@@ -95,33 +59,3 @@ export async function start_menu(config: McRSConfig, project_root: string) {
     }
 }
 
-export async function create_project_menu(project_root: string): Promise<McRSConfig> {
-    const answers = await inquirer.prompt([
-        {
-            name: "name",
-            message: "Project Name",
-            type: "input"
-        },
-        {
-            name: "description",
-            message: "Description",
-            type: "input"
-        }
-    ])
-
-    const {download_link, version_data} = await choose_version()
-
-    const new_config: McRSConfig = {
-        description: answers.description,
-        pack_format: version_data.resource_pack_version,
-        pack_name: answers.name,
-        summary_download: download_link,
-        version_id: version_data.id
-    }
-
-    SaveProjectConfig(project_root,new_config)
-    ScaffoldBasicComponents(project_root,new_config)
-    await DownloadResourcePackSummary(project_root,new_config)
-    return new_config
-
-}
