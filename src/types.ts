@@ -44,6 +44,9 @@ export class ResourceName {
     }
 
     static fromString(resource_path: string):ResourceName {
+        if (!resource_path.includes(":")){
+            resource_path="minecraft:"+resource_path
+        }
         let a = resource_path.split(":")
         let namespace = a[0]
         let path = a[1].split("/")
