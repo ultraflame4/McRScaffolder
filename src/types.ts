@@ -62,7 +62,7 @@ export class ResourceName {
     /**
      * Converts this resource name into a real absolute filepath given the context.
      * @param ctx The context for the resource name, eg. textures to get filepath for a texture
-     * @param ext The file extension
+     * @param ext The file extension with the . eg, ".png"
      */
     public filepath(ctx:string,ext:string) {
         return path.format({

@@ -36,8 +36,9 @@ export function PrintVersion() {
  * @param dest
  */
 export async function DownloadFile(url: string,dest:string):Promise<void> {
-    console.log(path.parse(dest))
-    // if ()
+    let pathInfo = path.parse(dest)
+    fs.mkdirSync(pathInfo.dir,{recursive:true})
+
     return fs.writeFileSync(dest, await download(url))
 
 }
