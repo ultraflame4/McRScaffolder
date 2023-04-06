@@ -16,7 +16,7 @@ async function choose_version(): Promise<{ download_link: string, version_data: 
     const spinner = ora("Getting versions...")
     spinner.start()
     let versions = await GetPackVersions()
-    spinner.stop()
+    spinner.succeed()
     let answers = await inquirer.prompt({
         name: "version",
         message: "Target Minecraft version",
