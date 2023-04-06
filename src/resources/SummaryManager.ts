@@ -4,6 +4,7 @@ import path from "path";
 import extract from "extract-zip";
 import {DownloadFile, GetVersionTag, ReadJson} from "../tools";
 import {ResourcesDir} from "./vars";
+import {ResourceName} from "../types";
 
 class SummaryManager {
     public static readonly branch = "summary"
@@ -42,12 +43,12 @@ class SummaryManager {
     }
 
     /**
-     * Returns a list of resources names as strings for specified item's textures
+     * Returns a list of resources names for specified item's textures
      * @param item_id
      */
-    public async get_item_textures(item_id:string): Promise<string[]> {
+    public async get_item_textures(item_id:string): Promise<ResourceName[]> {
         let model = (await ReadJson(this.resolve("assets","model","data.json")))[`item/${item_id}`]
-        return Object.values(model["textures"])
+        return Object.values(model["textures"]).map((x:string)=>ResourceName.fromString(x))
     }
 }
 

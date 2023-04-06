@@ -31,7 +31,7 @@ export interface VersionSummary {
 
 }
 
-class ResourceName {
+export class ResourceName {
     namespace: string
     path: string[]
 
@@ -40,7 +40,7 @@ class ResourceName {
         this.path = path;
     }
 
-    static fromString(resource_path: string) {
+    static fromString(resource_path: string):ResourceName {
         let a = resource_path.split(":")
         let namespace = a[0]
         let path = a[1].split("/")
