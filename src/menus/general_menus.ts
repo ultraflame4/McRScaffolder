@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import ora from 'ora';
-import {DownloadResourcePackSummary} from "../tools";
+import SummaryManager from "../resources/SummaryManager";
 
 
 async function settings_menu() {
@@ -25,7 +25,7 @@ async function settings_menu() {
 
     const spinner = ora("Download resource pack data...")
     spinner.start()
-    await DownloadResourcePackSummary()
+    await SummaryManager.download()
     spinner.stop()
     console.log(chalk.greenBright("Downloaded resource pack summary data!"))
 }
