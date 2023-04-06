@@ -29,8 +29,8 @@ async function settings_menu() {
     const spinner = ora("Download resource pack data...")
     spinner.start()
     await SummaryManager.download()
-    spinner.stop()
-    console.log(chalk.greenBright("Downloaded resource pack summary data!"))
+    spinner.succeed()
+
 }
 
 export async function start_menu() {
