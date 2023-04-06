@@ -1,6 +1,6 @@
 {
   "name": "mcrscaffolder",
-  "version": "0.0.0-alpha.0",
+  "version": "0.0.0-alpha.1",
   "description": "",
   "main": "bin/index.js",
   "type": "module",
@@ -22,7 +22,9 @@
   "files": [
     "bin"
   ],
-  "bin": "bin/index.js",
+  "bin": {
+    "mcrs":"bin/index.js"
+  },
   "dependencies": {
     "@types/inquirer": "^9.0.3",
     "@types/node": "^18.15.11",
