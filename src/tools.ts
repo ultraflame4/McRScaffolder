@@ -40,3 +40,6 @@ export async function DownloadFile(url: string,dest:string):Promise<void> {
 
 }
 
+export async function ReadJson(file_path):Promise<any>{
+    return JSON.parse(fs.readFileSync(file_path,{encoding:"utf-8"}))
+}

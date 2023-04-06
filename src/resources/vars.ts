@@ -1,1 +1,1 @@
-export const ResourcesDir = ".resource"
+export const ResourcesDir = ".resources"

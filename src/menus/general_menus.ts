@@ -2,6 +2,7 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import ora from 'ora';
 import SummaryManager from "../resources/SummaryManager";
+import {ask_new_item} from "./new_item";
 
 
 async function settings_menu() {
@@ -38,7 +39,7 @@ export async function start_menu() {
                 name: "Main Menu",
                 type: "list",
                 choices: [
-                    {name: "New Item", value: "new"},
+                    {name: "New Item", value: "new_item"},
                     {name: "Settings", value: "settings"},
                     {name: "Exit (Ctrl+C)", value: "exit"},
                 ]
@@ -46,7 +47,8 @@ export async function start_menu() {
         )
 
         switch (answers["Main Menu"]) {
-            case "new":
+            case "new_item":
+                await ask_new_item()
                 break;
             case "settings":
                 await settings_menu()
@@ -57,5 +59,6 @@ export async function start_menu() {
         }
 
     }
+    return
 }
 
