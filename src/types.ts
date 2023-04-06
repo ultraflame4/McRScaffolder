@@ -1,4 +1,5 @@
 import {Project} from "./project";
+import path from "path";
 
 export interface McRSConfig {
     pack_name: string,
@@ -50,11 +51,25 @@ export class ResourceName {
     }
 
     /**
-     * Converts this resource name into a real absolute filepath given the context.
+     * Converts this resource name into a path relative to the resource pack root. (where pack.mcmeta is)
      * @param ctx The context for the resource name, eg. textures to get filepath for a texture
      */
-    public filepath(ctx:string) {
-        return Project.resolve(Project.config.pack_name,"assets",this.namespace,ctx,...this.path)
+    public rel_path(ctx:string) {
+
+        return path.join("assets",this.namespace,ctx,...this.path)
+    }
+
+    /**
+     * Converts this resource name into a real absolute filepath given the context.
+     * @param ctx The context for the resource name, eg. textures to get filepath for a texture
+     * @param ext The file extension
+     */
+    public filepath(ctx:string,ext:string) {
+        return path.format({
+            ...path.parse(Project.resolve(Project.config.pack_name,"assets",this.namespace,ctx,...this.path)),
+             base: '',
+            ext:ext
+        })
     }
 }
 

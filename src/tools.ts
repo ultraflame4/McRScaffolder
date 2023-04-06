@@ -4,6 +4,7 @@ import chalk from "chalk";
 import pkg from "../package.json";
 import * as fs from "fs";
 import download from "download"
+import path from "path";
 
 
 /**
@@ -35,7 +36,8 @@ export function PrintVersion() {
  * @param dest
  */
 export async function DownloadFile(url: string,dest:string):Promise<void> {
-
+    console.log(path.parse(dest))
+    // if ()
     return fs.writeFileSync(dest, await download(url))
 
 }
