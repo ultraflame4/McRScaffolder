@@ -1,6 +1,6 @@
 {
   "name": "mcrscaffolder",
-  "version": "0.0.0-alpha.1",
+  "version": "0.0.0-alpha.2",
   "description": "",
   "main": "bin/index.js",
   "type": "module",
@@ -20,7 +20,8 @@
     "tsx": "^3.12.6"
   },
   "files": [
-    "bin"
+    "bin",
+    "LICENSE"
   ],
   "bin": {
     "mcrs":"bin/index.js"
