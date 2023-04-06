@@ -9,8 +9,12 @@
     "build": "tsx config.ts"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "ultraflame4",
+    "url": "github.com/ultraflame4"
+  },
+  "repository": "https://github.com/ultraflame4/McRScaffolder.git",
+  "license": "GNU GPLv3",
   "devDependencies": {
     "esbuild": "^0.17.15",
     "tsx": "^3.12.6"
