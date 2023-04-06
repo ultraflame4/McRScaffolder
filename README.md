@@ -5,6 +5,11 @@ later manage & develop your resource pack.
 
 ## Usage & Explainations
 
+Install with : `npm install mcrscaffolder`.
+
+Execute `npx mcrs --help` to see help options.
+
+
 ### Main menu options
 
 After you first create a new project or open an existing one,<br>
