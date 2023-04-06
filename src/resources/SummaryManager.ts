@@ -35,6 +35,14 @@ class SummaryManager {
         await extract(dl_path,{dir:path.resolve(dir_path,SummaryManager.branch)})
     }
 
+
+    /**
+     * Gets a list of all minecraft textures from the registry
+     */
+    public async read_textures():Promise<string[]> {
+        return (await ReadJson(this.resolve("registries","data.json")))["texture"]
+    }
+
     /**
      * Gets a list of all minecraft items from the registry
      */

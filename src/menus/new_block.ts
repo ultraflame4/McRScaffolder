@@ -28,7 +28,7 @@ export async function ask_new_block() {
     }
     const spinner2 = ora(`Downloading ${textures.length} block textures...`);
     spinner2.start()
-    await AssetsManager.downloadTextures(textures)
+    await AssetsManager.downloadTextures(...textures)
     spinner2.succeed()
 
     return

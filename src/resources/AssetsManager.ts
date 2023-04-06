@@ -23,7 +23,7 @@ class AssetsManager{
      * Downloads 1 or more textures into the resource pack project
      * @param textures
      */
-    public async downloadTextures(textures: ResourceName[]) {
+    public async downloadTextures(...textures: ResourceName[]) {
         await this.downloadAsset(textures,"textures",".png")
     }
 }

@@ -4,6 +4,7 @@ import ora from 'ora';
 import SummaryManager from "../resources/SummaryManager";
 import {ask_new_item} from "./new_item";
 import {ask_new_block} from "./new_block";
+import {ask_new_texture} from "./new_texture";
 
 
 async function settings_menu() {
@@ -42,6 +43,7 @@ export async function start_menu() {
                 choices: [
                     {name: "New Item", value: "new_item"},
                     {name: "New Block", value: "new_block"},
+                    {name: "New Texture", value: "new_texture"},
                     {name: "Settings", value: "settings"},
                     {name: "Exit (Ctrl+C)", value: "exit"},
                 ]
@@ -54,6 +56,9 @@ export async function start_menu() {
                 break;
             case "new_block":
                 await ask_new_block()
+                break;
+            case "new_texture":
+                await ask_new_texture()
                 break;
             case "settings":
                 await settings_menu()
