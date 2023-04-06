@@ -20,8 +20,9 @@
     "tsx": "^3.12.6"
   },
   "files": [
-    "src"
+    "bin"
   ],
+  "bin": "bin/index.js",
   "dependencies": {
     "@types/inquirer": "^9.0.3",
     "@types/node": "^18.15.11",
