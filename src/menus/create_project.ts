@@ -1,12 +1,13 @@
 
-import {McRSConfig, PackMcMeta, VersionSummary} from "./types";
+import {McRSConfig, PackMcMeta, VersionSummary} from "../types";
 import inquirer from "inquirer";
-import {DownloadResourcePackSummary, GetPackSummaryDownload, GetPackVersions} from "./tools";
+import { GetPackVersions} from "../tools";
 import chalk from "chalk";
 import ora from "ora"
 import path from "path";
 import fs from "fs";
-import {Project} from "./project";
+import {Project} from "../project";
+import SummaryManager from "../resources/SummaryManager";
 
 /**
  * Asks the user for the target minecraft version and returns the download link for that version summary
@@ -29,7 +30,7 @@ async function choose_version(): Promise<{ download_link: string, version_data: 
         })
     })
 
-    let downloadLink = GetPackSummaryDownload(answers["version"].id)
+    let downloadLink = SummaryManager.resolveDownload(answers["version"].id)
     console.log(
         chalk.green("Resolved download link to:"),
         chalk.underline.cyanBright(downloadLink)
@@ -83,7 +84,7 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
     Project.Initialise(project_root, new_config)
 
     ScaffoldBasicComponents()
-    await DownloadResourcePackSummary()
+    await SummaryManager.download()
     return new_config
 
 }

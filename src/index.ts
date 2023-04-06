@@ -4,9 +4,9 @@ import {program} from "commander";
 import {PrintVersion} from "./tools";
 import path from "path";
 import chalk from "chalk";
-import {start_menu} from "./general_menus";
+import {start_menu} from "./menus/general_menus";
 import {Project} from "./project";
-import {create_project_menu} from "./create_project";
+import {create_project_menu} from "./menus/create_project";
 
 PrintVersion()
 program

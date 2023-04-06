@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import ora from 'ora';
-import {DownloadResourcePackSummary} from "./tools";
+import {DownloadResourcePackSummary} from "../tools";
 
 
 async function settings_menu() {

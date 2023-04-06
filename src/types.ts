@@ -31,4 +31,20 @@ export interface VersionSummary {
 
 }
 
-[]
+class ResourceName {
+    namespace: string
+    path: string[]
+
+    constructor(namespace, path) {
+        this.namespace = namespace;
+        this.path = path;
+    }
+
+    static fromString(resource_path: string) {
+        let a = resource_path.split(":")
+        let namespace = a[0]
+        let path = a[1].split("/")
+        return new ResourceName(namespace, path)
+    }
+}
+
