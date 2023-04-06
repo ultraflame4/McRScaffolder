@@ -14,9 +14,12 @@ you will be presented with several options in the main menu.
 |---------------|-------------------------------------------------------------------------|
 | New Item      | Downloads and adds the textures used for a given block into the project |
 | New Block     | Downloads and adds the textures used for a given block into the project |
-| New Texture   | Downloads and adds a new texture into the project                       |
+| New Texture   | Downloads and adds a new texture into the project.                      |
 | Settings      | For development and other stuff                                         |
 | Exit (Ctrl+C) | Exits the program                                                       |
+
+The `New Item` & `New Block` options exists as `New Texture` only adds a single texture whereas
+`New Item` & `New Block` may add multiple textures if needed for the specific block/item
 
 ### Sources
 
