@@ -81,10 +81,17 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
         version_id: version_data.id
     }
 
+    const spinner = ora("Initialising project...")
+    spinner.start()
     Project.Initialise(project_root, new_config)
+    spinner.succeed()
 
     ScaffoldBasicComponents()
+    const spinner2 = ora("Download summary data...")
+    spinner2.start()
     await SummaryManager.download()
+    spinner2.succeed()
+
     return new_config
 
 }
