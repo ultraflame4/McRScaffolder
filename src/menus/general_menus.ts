@@ -3,6 +3,7 @@ import chalk from "chalk";
 import ora from 'ora';
 import SummaryManager from "../resources/SummaryManager";
 import {ask_new_item} from "./new_item";
+import {ask_new_block} from "./new_block";
 
 
 async function settings_menu() {
@@ -40,6 +41,7 @@ export async function start_menu() {
                 type: "list",
                 choices: [
                     {name: "New Item", value: "new_item"},
+                    {name: "New Block", value: "new_block"},
                     {name: "Settings", value: "settings"},
                     {name: "Exit (Ctrl+C)", value: "exit"},
                 ]
@@ -50,11 +52,15 @@ export async function start_menu() {
             case "new_item":
                 await ask_new_item()
                 break;
+            case "new_block":
+                await ask_new_block()
+                break;
             case "settings":
                 await settings_menu()
                 break;
             case "exit":
                 run = false
+                process.exit()
                 break;
         }
 

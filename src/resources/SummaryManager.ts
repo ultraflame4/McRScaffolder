@@ -41,7 +41,6 @@ class SummaryManager {
     public async read_items():Promise<string[]> {
         return (await ReadJson(this.resolve("registries","data.json")))["item"]
     }
-
     /**
      * Returns a list of resources names for specified item's textures
      * @param item_id
@@ -50,6 +49,24 @@ class SummaryManager {
         let model = (await ReadJson(this.resolve("assets","model","data.json")))[`item/${item_id}`]
         return Object.values(model["textures"]).map((x:string)=>ResourceName.fromString(x))
     }
+    /**
+     * Gets a list of all minecraft blocks from the registry
+     */
+    public async read_blocks():Promise<string[]> {
+        return (await ReadJson(this.resolve("registries","data.json")))["block"]
+    }
+    /**
+     * Returns a list of resources names for specified item's textures
+     * @param item_id
+     */
+    public async get_block_textures(block_id:string): Promise<ResourceName[]> {
+        let model = (await ReadJson(this.resolve("assets","model","data.json")))[`block/${block_id}`]
+        if (!model["textures"]) {
+            return []
+        }
+        return Object.values(model["textures"]).map((x:string)=>ResourceName.fromString(x));
+    }
+
 }
 
 export default new SummaryManager()
