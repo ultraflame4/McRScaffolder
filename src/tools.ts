@@ -1,4 +1,3 @@
-import {Octokit} from "octokit";
 import {type VersionSummary} from "./types";
 import chalk from "chalk";
 import pkg from "../package.json";

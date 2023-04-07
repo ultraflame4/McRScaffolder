@@ -1,4 +1,5 @@
 import {Project} from "../project";
+import {ResourceName} from "../types";
 
 class ShadersManager{
     /**
@@ -8,6 +9,14 @@ class ShadersManager{
 
     public get available():boolean {
         return Date.parse(Project.config.version_release_time) >= this.shaders_avail_time
+    }
+
+    public async getShadersList():Promise<ResourceName[]> {
+        if (!this.available) {
+            return []
+        }
+
+        return
     }
 }
 
