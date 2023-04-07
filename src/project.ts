@@ -1,12 +1,19 @@
 import {McRSConfig} from "./types";
 import path from "path";
 import fs from "fs";
+import {GetVersionTag} from "./tools";
 
 
 class Project_ {
 
     /// Project Root
     #project_root: string | null
+
+
+    public version_tag(branch_name:string):string {
+        return GetVersionTag(this.config.version_id,branch_name)
+    }
+
     public get project_root(): string {
         if (this.#project_root === null)
             throw new Error("Error while getting project root. project root not set!")

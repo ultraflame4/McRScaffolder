@@ -77,3 +77,7 @@ export class ResourceName {
     }
 }
 
+export interface ShaderResource{
+    name:string,
+    files:ResourceName[]
+}
