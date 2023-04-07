@@ -45,3 +45,7 @@ export async function DownloadFile(url: string,dest:string):Promise<void> {
 export async function ReadJson(file_path):Promise<any>{
     return JSON.parse(fs.readFileSync(file_path,{encoding:"utf-8"}))
 }
+
+export function resolvePathEnvVars(path_: string) {
+    return path_.replace(/%([^%]+)%/g, (_,n) => process.env[n] ?? "")
+}

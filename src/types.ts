@@ -7,7 +7,8 @@ export interface McRSConfig {
     version_id: string,
     version_release_time: string,
     pack_format: number,
-    summary_download: string
+    summary_download: string,
+    mc_resourcepack_folder: string
 }
 
 export interface PackMcMeta {
