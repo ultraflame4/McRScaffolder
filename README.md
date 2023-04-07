@@ -9,19 +9,20 @@ Install with : `npm install mcrscaffolder`.
 
 Execute `npx mcrs --help` to see help options.
 
-
 ### Main menu options
 
 After you first create a new project or open an existing one,<br>
 you will be presented with several options in the main menu.
 
-| Name          | Description                                                             |
-|---------------|-------------------------------------------------------------------------|
-| New Item      | Downloads and adds the textures used for a given block into the project |
-| New Block     | Downloads and adds the textures used for a given block into the project |
-| New Texture   | Downloads and adds a new texture into the project.                      |
-| Settings      | For development and other stuff                                         |
-| Exit (Ctrl+C) | Exits the program                                                       |
+| Name          | Description                                                                                                                                                                                            |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| New Item      | Downloads & adds the textures used for a given block into the project                                                                                                                                  |
+| New Block     | Downloads & adds the textures used for a given block into the project                                                                                                                                  |
+| New Texture   | Downloads & adds a new texture into the project.                                                                                                                                                       |
+| New Shader    | (1.17+) Downloads & adds the shader files for a given shader                                                                                                                                           |
+| Watch & Sync  | (in development) Watches the project files for changes and sync them to the minecraft resource pack folder.<br/>Hence you only need to reload (and equip) the resource pack (F3+T) to see the changes. |
+| Settings      | For development and other stuff                                                                                                                                                                        |
+| Exit (Ctrl+C) | Exits the program                                                                                                                                                                                      |
 
 The `New Item` & `New Block` options exists as `New Texture` only adds a single texture whereas
 `New Item` & `New Block` may add multiple textures if needed for the specific block/item
