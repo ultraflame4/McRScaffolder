@@ -5,6 +5,7 @@ export interface McRSConfig {
     pack_name: string,
     description: string,
     version_id: string,
+    version_release_time: string,
     pack_format: number,
     summary_download: string
 }

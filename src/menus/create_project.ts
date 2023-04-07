@@ -78,7 +78,8 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
         pack_format: version_data.resource_pack_version,
         pack_name: answers.name,
         summary_download: download_link,
-        version_id: version_data.id
+        version_id: version_data.id,
+        version_release_time: version_data.release_time
     }
 
     const spinner = ora("Initialising project...")
