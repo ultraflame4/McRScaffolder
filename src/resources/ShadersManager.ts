@@ -44,7 +44,7 @@ class ShadersManager {
                     files: []
                 }
             }
-            shaders[shader_name].files.push(new ResourceName("minecraft", x.path))
+            shaders[shader_name].files.push(new ResourceName("minecraft", x.path.split("/")))
         })
 
         return Object.values(shaders)

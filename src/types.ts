@@ -39,7 +39,7 @@ export class ResourceName {
     namespace: string
     path: string[]
 
-    constructor(namespace, path) {
+    constructor(namespace:string, path:string[]) {
         this.namespace = namespace;
         this.path = path;
     }
