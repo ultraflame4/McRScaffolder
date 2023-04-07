@@ -13,7 +13,7 @@ class AssetsManager{
     public async downloadAsset(names: ResourceName[],ctx:string,ext:string=null) {
         for (let i = 0; i < names.length; i++) {
             let value = names[i]
-            const dl_path = path.join(`misode/mcmeta/${GetVersionTag(Project.config.version_id,"assets")}`,value.rel_path(ctx)+ext??"")
+            const dl_path = path.join(`misode/mcmeta/${GetVersionTag(Project.config.version_id,"assets")}`,value.rel_path(ctx)+(ext??""))
             const dl_link = new URL(dl_path,"https://raw.githubusercontent.com")
             await DownloadFile(dl_link.toString(),value.filepath(ctx,ext))
         }
