@@ -46,6 +46,7 @@ export async function start_menu() {
                     {name: "New Block", value: "new_block"},
                     {name: "New Texture", value: "new_texture"},
                     {name: "New Shader", value: "new_shader"},
+                    {name: "Watch & Sync", value: "watch"},
                     {name: "Settings", value: "settings"},
                     {name: "Exit (Ctrl+C)", value: "exit"},
                 ]
@@ -64,6 +65,9 @@ export async function start_menu() {
                 break;
             case "new_shader":
                 await ask_new_shader()
+                break;
+            case "watch":
+                console.log(chalk.yellowBright("TODO!"))
                 break;
             case "settings":
                 await settings_menu()
