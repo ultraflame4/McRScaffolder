@@ -2,6 +2,8 @@ import inquirer from "inquirer";
 import ShadersManager from "../resources/ShadersManager";
 import chalk from "chalk";
 import ora from "ora"
+import {ShaderResource} from "../types";
+import AssetsManager from "../resources/AssetsManager";
 
 export async function ask_new_shader() {
 
@@ -20,8 +22,12 @@ export async function ask_new_shader() {
         //@ts-ignore
         type: "search-list",
         message: "Select shader",
-        choices:shaders.map(x=>{return x.name})
+        choices:shaders.map(x=>{return {name:x.name,value:x}})
     })
-
-    const chosen_shader = ans["_"]
+    const shader:ShaderResource = ans["_"]
+    const spinner2 = ora(`Downloading ${shader.files.length} shader files...`)
+    spinner2.start()
+    await AssetsManager.downloadAsset(shader.files,"shaders")
+    spinner2.succeed()
+    return
 }

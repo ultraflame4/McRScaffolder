@@ -10,7 +10,7 @@ class AssetsManager{
      * @param ctx The context, eg. "textures"
      * @param ext The file extension with the . eg. ".png"
      */
-    public async downloadAsset(names: ResourceName[],ctx:string,ext:string) {
+    public async downloadAsset(names: ResourceName[],ctx:string,ext:string=null) {
         for (let i = 0; i < names.length; i++) {
             let value = names[i]
             const dl_path = path.join(`misode/mcmeta/${GetVersionTag(Project.config.version_id,"assets")}`,value.rel_path(ctx)+ext)

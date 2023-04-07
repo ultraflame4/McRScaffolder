@@ -66,14 +66,17 @@ export class ResourceName {
     /**
      * Converts this resource name into a real absolute filepath given the context.
      * @param ctx The context for the resource name, eg. textures to get filepath for a texture
-     * @param ext The file extension with the . eg, ".png"
+     * @param ext The file extension with the . eg, ".png". Leave null to have no ext
      */
-    public filepath(ctx:string,ext:string) {
+    public filepath(ctx:string,ext:string=null) {
+        if (ext === null) {
+            return Project.resolve(Project.config.pack_name,"assets",this.namespace,ctx,...this.path)
+        }
         return path.format({
             ...path.parse(Project.resolve(Project.config.pack_name,"assets",this.namespace,ctx,...this.path)),
              base: '',
             ext:ext
-        })
+        });
     }
 }
 
