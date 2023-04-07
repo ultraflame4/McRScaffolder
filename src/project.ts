@@ -1,7 +1,7 @@
 import {McRSConfig} from "./types";
 import path from "path";
 import fs from "fs";
-import {GetVersionTag} from "./tools";
+import {GetVersionTag, resolvePathEnvVars} from "./tools";
 
 
 class Project_ {
@@ -77,6 +77,9 @@ class Project_ {
 
     }
 
+    public get mcResourcePackPath() {
+        return path.resolve(resolvePathEnvVars(this.config.mc_resourcepack_folder))
+    }
 
 }
 
