@@ -68,6 +68,12 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
             name: "description",
             message: "Description",
             type: "input"
+        },
+        {
+            name: "mc_respack",
+            message: "Minecraft resource pack folder",
+            default:"%appdata%/.minecraft/resourcepacks",
+            type: "input"
         }
     ])
 
@@ -79,7 +85,8 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
         pack_name: answers.name,
         summary_download: download_link,
         version_id: version_data.id,
-        version_release_time: version_data.release_time
+        version_release_time: version_data.release_time,
+        mc_resourcepack_folder: answers.mc_respack
     }
 
     const spinner = ora("Initialising project...")
