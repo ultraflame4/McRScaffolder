@@ -15,7 +15,7 @@ class ShadersManager {
 
     public get shader_treesha(): string {
         let v_tag = Project.version_tag("assets")
-        let asset_path = encodeURIComponent("assets/minecraft/shaders")
+        let asset_path = "assets/minecraft/shaders"
         return `${v_tag}:${asset_path}`
     }
 
@@ -34,8 +34,11 @@ class ShadersManager {
 
         let shaders: Record<string, ShaderResource> = {};
         files.forEach(x => {
-            let shader_name = x.path.replace(/\.[^/.]+$/, "")
-            if (shaders[shader_name] === undefined && x.type === "blob") {
+            if (x.type !== "blob") {
+                return
+            }
+            let shader_name = x.path.replace(/\.[^/.]+$/, "");
+            if (shaders[shader_name] === undefined) {
                 shaders[shader_name] = {
                     name: shader_name,
                     files: []
