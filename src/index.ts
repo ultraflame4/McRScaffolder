@@ -14,17 +14,17 @@ inquirer.registerPrompt('search-list', inquirer_search_list);
 
 
 PrintVersion()
-program
-    .name(pkg.name)
-    .description(pkg.description)
+program.description(pkg.description)
     .version(pkg.version)
+
+program.command("open")
     .argument("[project_path]",
         "Path to the project root where the mcrs.config.json config file is. " +
         "Will create a new project if the path or the file does not exist.",
         ".")
     .action(async (raw_project_path: string) => {
         const project_path = path.resolve(raw_project_path);
-        console.log(chalk.whiteBright("Project root set to:"),chalk.greenBright(project_path))
+        console.log(chalk.whiteBright("Project root set to:"), chalk.greenBright(project_path))
 
 
         if (!Project.Initialise(project_path)) {
@@ -33,6 +33,10 @@ program
 
         await start_menu()
     })
+
+
+program.command("watch")
+    .action(args => console.log(chalk.yellowBright("TODO!")))
 
 program.parse()
 
