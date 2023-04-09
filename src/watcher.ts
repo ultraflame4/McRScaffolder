@@ -50,7 +50,18 @@ class Watcher{
     }
 
     public run() {
-        const proj_pack_path = Project.resolve(Project.config.pack_name)
+        if (!fs.existsSync(Project.mcResourcePackPath)) {
+            console.log(
+                chalk.red.bold("Fatal Error !!"),
+                "Minecraft resource pack folder:",
+                chalk.yellow.bold(Project.mcResourcePackPath)
+                ,"does not exist!"
+            )
+            return
+        }
+
+
+        const proj_pack_path = Project.resolve(Project.config.pack_name);
 
         this.spinner.start([
             "Watching",
