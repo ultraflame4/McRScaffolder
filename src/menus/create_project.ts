@@ -1,7 +1,6 @@
-
 import {McRSConfig, PackMcMeta, VersionSummary} from "../types";
-import inquirer from "inquirer";
-import { GetPackVersions} from "../tools";
+import inquirer, {Answers} from "inquirer";
+import {GetPackVersions, pathIsDir, resolvePathEnvVars} from "../tools";
 import chalk from "chalk";
 import ora from "ora"
 import path from "path";
@@ -53,8 +52,8 @@ export function ScaffoldBasicComponents() {
         }
     }
     // Create the basic folders & files
-    fs.mkdirSync(path.resolve(resourcepack_root,"assets"),{recursive:true})
-    fs.writeFileSync(path.resolve(resourcepack_root,"pack.mcmeta"),JSON.stringify(pack_mcmeta,null,3))
+    fs.mkdirSync(path.resolve(resourcepack_root, "assets"), {recursive: true})
+    fs.writeFileSync(path.resolve(resourcepack_root, "pack.mcmeta"), JSON.stringify(pack_mcmeta, null, 3))
 }
 
 export async function create_project_menu(project_root: string): Promise<McRSConfig> {
@@ -72,7 +71,14 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
         {
             name: "mc_respack",
             message: "Minecraft resource pack folder",
-            default:"%appdata%/.minecraft/resourcepacks",
+            default: "%appdata%/.minecraft/resourcepacks",
+            async validate(input: string): Promise<string | boolean> {
+
+                if (!pathIsDir(path.resolve(resolvePathEnvVars(input)))){
+                    return "Folder could not be found! Please ensure the folder exists and the path is correct! (This is a precaution against mistakes)"
+                }
+                return true
+            },
             type: "input"
         }
     ])

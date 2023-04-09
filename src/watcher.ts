@@ -7,6 +7,7 @@ import path from "path";
 import * as readline from "readline";
 import {program} from "commander";
 import fs from "fs";
+import {pathIsDir} from "./tools";
 
 
 
@@ -50,7 +51,7 @@ class Watcher{
     }
 
     public run() {
-        if (!fs.existsSync(Project.mcResourcePackPath)) {
+        if (!pathIsDir(Project.mcResourcePackPath)) {
             console.log(
                 chalk.red.bold("Fatal Error !!"),
                 "Minecraft resource pack folder:",

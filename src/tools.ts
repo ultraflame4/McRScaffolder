@@ -49,3 +49,7 @@ export async function ReadJson(file_path):Promise<any>{
 export function resolvePathEnvVars(path_: string) {
     return path_.replace(/%([^%]+)%/g, (_,n) => process.env[n] ?? "")
 }
+
+export function pathIsDir(path: string) {
+    return fs.existsSync(path) && fs.lstatSync(path).isDirectory()
+}
