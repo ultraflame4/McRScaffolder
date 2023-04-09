@@ -10,6 +10,8 @@ import {create_project_menu} from "./menus/create_project";
 import inquirer from "inquirer";
 import inquirer_search_list from "inquirer-search-list"
 
+import watcher from "./watcher";
+
 inquirer.registerPrompt('search-list', inquirer_search_list);
 
 
@@ -36,7 +38,16 @@ program.command("open")
 
 
 program.command("watch")
-    .action(args => console.log(chalk.yellowBright("TODO!")))
+    .argument("[project_path]",
+        "Path to the project root where the mcrs.config.json config file is.",
+        ".")
+    .action(async (raw_project_path: string) => {
+        if (!Project.Initialise(path.resolve(raw_project_path))) {
+            console.log(chalk.redBright("Error!"),"Cannot find project in current directory. Please initialise a project with `mcrs open` first!")
+            return
+        }
+        watcher.run()
+    })
 
 program.parse()
 
