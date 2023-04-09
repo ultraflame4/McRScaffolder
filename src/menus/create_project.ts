@@ -75,7 +75,13 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
             async validate(input: string): Promise<string | boolean> {
 
                 if (!pathIsDir(path.resolve(resolvePathEnvVars(input)))){
-                    return "Folder could not be found! Please ensure the folder exists and the path is correct! (This is a precaution against mistakes)"
+                    return [
+                        chalk.yellow(input),
+                        chalk.redBright("could not be found!"),
+                        "Please ensure the folder exists and the path is correct!",
+                        chalk.cyan.dim("(This is a precaution against mistakes!)")
+                    ].join(" ")
+
                 }
                 return true
             },
