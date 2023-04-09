@@ -28,7 +28,10 @@ class Watcher{
         this.spinner.start(`Watching ${proj_pack_path} for changes...`)
 
         const watcher = chokidar.watch(proj_pack_path,{
-            awaitWriteFinish:true
+            awaitWriteFinish: {
+                pollInterval:100,
+                stabilityThreshold:500
+            }
         });
 
         watcher.on("add", (path)=>{
