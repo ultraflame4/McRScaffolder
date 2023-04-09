@@ -48,6 +48,7 @@ export async function start_menu() {
                     {name: "New Block", value: "new_block"},
                     {name: "New Texture", value: "new_texture"},
                     {name: "New Shader", value: "new_shader"},
+                    {name: "Watch & Sync", value: "watch"},
                     {name: "Settings", value: "settings"},
                     {name: "Exit (Ctrl+C)", value: "exit"},
                 ]
@@ -67,7 +68,11 @@ export async function start_menu() {
             case "new_shader":
                 await ask_new_shader()
                 break;
-
+            case "watch":
+                console.log(chalk.cyan.bold("i"),
+                    "To use watch mode, run",
+                    chalk.yellow("mcrs watch"),"in another terminal session!")
+                break;
             case "settings":
                 await settings_menu()
                 break;
