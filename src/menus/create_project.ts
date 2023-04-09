@@ -7,6 +7,7 @@ import path from "path";
 import fs from "fs";
 import {Project} from "../project";
 import SummaryManager from "../resources/SummaryManager";
+import {transform} from "esbuild";
 
 /**
  * Asks the user for the target minecraft version and returns the download link for that version summary
@@ -18,25 +19,23 @@ async function choose_version(): Promise<{ download_link: string, version_data: 
     spinner.succeed()
     let answers = await inquirer.prompt({
         name: "version",
-        message: "Target Minecraft version",
-        type: "rawlist",
+        message: "Select target Minecraft version",
+        //@ts-ignore
+        type: "search-list",
         default: versions.findIndex(x => x.stable),
-        choices: versions.map(x => {
-            return {
-                name: `${x.name}`,
-                value: x
-            }
-        })
-    })
+        choices: versions.map(x => x.id)
 
-    let downloadLink = SummaryManager.resolveDownload(answers["version"].id)
+    })
+    let ver:VersionSummary = versions.find(x=>x.id===answers["version"])
+
+    let downloadLink = SummaryManager.resolveDownload(ver.id)
     console.log(
         chalk.green("Resolved download link to:"),
         chalk.underline.cyanBright(downloadLink)
     )
     return {
         download_link: downloadLink,
-        version_data: answers["version"]
+        version_data: ver
     }
 }
 
@@ -74,7 +73,7 @@ export async function create_project_menu(project_root: string): Promise<McRSCon
             default: "%appdata%/.minecraft/resourcepacks",
             async validate(input: string): Promise<string | boolean> {
 
-                if (!pathIsDir(path.resolve(resolvePathEnvVars(input)))){
+                if (!pathIsDir(path.resolve(resolvePathEnvVars(input)))) {
                     return [
                         chalk.yellow(input),
                         chalk.redBright("could not be found!"),
