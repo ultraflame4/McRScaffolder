@@ -54,9 +54,10 @@ class Watcher{
             console.log(
                 chalk.red.bold("Fatal Error !!"),
                 "Minecraft resource pack folder:",
-                chalk.yellow.bold(Project.mcResourcePackPath)
-                ,"does not exist!"
+                chalk.yellow.bold(Project.mcResourcePackPath),
+                "does not exist!"
             )
+            console.log(chalk.cyan.dim("This is a precaution against accidental mistakes. Create the folder manually (and rerun) if you intend to continue."))
             return
         }
 
