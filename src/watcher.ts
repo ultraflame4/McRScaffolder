@@ -6,6 +6,7 @@ import chalk from "chalk";
 import path from "path";
 import * as readline from "readline";
 import {program} from "commander";
+import fs from "fs";
 
 
 
@@ -47,6 +48,7 @@ class Watcher{
             process.exit(100)
         })
     }
+
     public run() {
         const proj_pack_path = Project.resolve(Project.config.pack_name)
 
@@ -65,15 +67,26 @@ class Watcher{
             persistent:true,
         });
 
-        this.watcher.on("add", (path)=>{
-            this.logAdd(path,"file")
-
+        this.watcher.on("add", (path_)=>{
+            this.logAdd(path_,"file")
+            fs.cpSync(path_,this.resolveDest(path_),{
+                recursive:true,
+                force:true,
+            })
         });
-        this.watcher.on("change", (path)=>{
-           this.logModfied(path,"file")
+        this.watcher.on("change", (path_)=>{
+           this.logModfied(path_,"file")
+            fs.mkdirSync(path.dirname(path_),{recursive:true})
+            fs.cpSync(path_,this.resolveDest(path_),{
+                recursive:true,
+                force:true,
+            })
         });
         this.watcher.on("unlink", (path)=>{
             this.logRemove(path,"file")
+            if (fs.existsSync(path)){
+                fs.unlinkSync(this.resolveDest(path))
+            }
         });
 
         this.watcher.on("addDir", (path) => {
@@ -82,6 +95,7 @@ class Watcher{
                 return
             }
             this.logAdd(path,"directory");
+            fs.mkdirSync(this.resolveDest(path),{recursive:true})
         });
         this.watcher.on("unlinkDir", (path) => {
             const rel_path = this.relPath(path)
@@ -90,6 +104,7 @@ class Watcher{
                 return
             }
             this.logRemove(path,"directory")
+            fs.rmSync(this.resolveDest(path),{ recursive: true, force: true })
         });
 
         this.watcher.on("error", (e)=>{

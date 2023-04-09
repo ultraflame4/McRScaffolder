@@ -6,6 +6,9 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
+    "types": [
+      "noed"
+    ]
   },
 
   "exclude": [
