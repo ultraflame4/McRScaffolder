@@ -94,6 +94,7 @@ class Watcher{
 
         this.watcher.on("error", (e)=>{
             console.log("\n"+chalk.redBright(`x Error -`), e.message)
+            // @ts-ignore
             if (e.code==="EPERM") {
                 return
             }
