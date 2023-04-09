@@ -19,6 +19,7 @@ program.description(pkg.description)
     .version(pkg.version)
 
 program.command("open")
+    .description("Opens or creates an existing project.")
     .argument("[project_path]",
         "Path to the project root where the mcrs.config.json config file is. " +
         "Will create a new project if the path or the file does not exist.",
@@ -37,6 +38,8 @@ program.command("open")
 
 
 program.command("watch")
+    .description("Watch mode, will copy whatever in the project resource pack into the minecraft resource pack folder (specified in mcrs.config.json)." +
+        "Useful when working on and testing a resource pack; changes will be copied over, however f3+T is still needed to reload the resource pack.")
     .argument("[project_path]",
         "Path to the project root where the mcrs.config.json config file is.",
         ".")
