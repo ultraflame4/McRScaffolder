@@ -2,20 +2,22 @@ import {Project} from "./project";
 import chokidar from "chokidar"
 import ora from "ora"
 import chalk from "chalk";
-import fs from "fs";
+
 import path from "path";
-import {program} from "commander";
 import * as readline from "readline";
+import {program} from "commander";
 
 
 
 class Watcher{
     private spinner = ora({
-        color:"magenta"
+        color:"magenta",
+
     })
+    private watcher: chokidar.FSWatcher;
     private logRaw(prefix: string, desc: string, path_: string) {
         this.spinner.clear()
-        console.log(prefix,desc,chalk.dim(path_))
+        console.log(prefix,desc,chalk.cyan(this.relPath(path_)),chalk.dim("Reflected in",this.resolveDest(path_)))
     }
     private logAdd(path:string,type_:string) {
         this.logRaw(chalk.greenBright("+"),`Added ${type_}`,path)
@@ -24,11 +26,26 @@ class Watcher{
         this.logRaw(chalk.yellowBright("~"),`Modified ${type_}`,path)
     }
     private logRemove(path:string,type_:string) {
-        this.logRaw(chalk.redBright("-"),`Removed ${type_}`,this.resolveDest(path))
+        this.logRaw(chalk.redBright("-"),`Removed ${type_}`,path)
     }
 
+    /**
+     * Returns the path relative to the project's resourcepack root
+     * @param path_
+     */
+    private relPath(path_: string):string {
+        return path.relative(Project.resolve(Project.config.pack_name),path_)
+    }
     private resolveDest(path_: string) {
-        return path.relative(path_,Project.resolve(Project.config.pack_name))
+        return path.resolve(Project.mcResourcePackPath,Project.config.pack_name,this.relPath(path_))
+    }
+
+    private failWatch() {
+        this.watcher.close().then(() => {
+            this.spinner.clear()
+            console.error("Error occurred while file watching. Watch stopped.")
+            process.exit(100)
+        })
     }
     public run() {
         const proj_pack_path = Project.resolve(Project.config.pack_name)
@@ -40,34 +57,47 @@ class Watcher{
             chalk.dim("(Ctrl+C to quit)")
         ].join(" "))
 
-        const watcher = chokidar.watch(proj_pack_path,{
+        this.watcher = chokidar.watch(proj_pack_path,{
             awaitWriteFinish: {
                 pollInterval:100,
                 stabilityThreshold:500
-            }
+            },
+            persistent:true,
         });
 
-        watcher.on("add", (path)=>{
+        this.watcher.on("add", (path)=>{
             this.logAdd(path,"file")
 
         });
-        watcher.on("change", (path)=>{
+        this.watcher.on("change", (path)=>{
            this.logModfied(path,"file")
         });
-        watcher.on("unlink", (path)=>{
+        this.watcher.on("unlink", (path)=>{
             this.logRemove(path,"file")
         });
 
-        watcher.on("addDir", (path) => {
-            this.logAdd(path,"directory")
+        this.watcher.on("addDir", (path) => {
+            const rel_path = this.relPath(path)
+            if (rel_path === "") {
+                return
+            }
+            this.logAdd(path,"directory");
         });
-        watcher.on("unlinkDir", (path) => {
+        this.watcher.on("unlinkDir", (path) => {
+            const rel_path = this.relPath(path)
+            if (rel_path === "") {
+                this.failWatch()
+                return
+            }
             this.logRemove(path,"directory")
         });
 
-        watcher.on("error", (e)=>{
-            console.log("\n"+chalk.redBright(`x Error -`), e)
-            watcher.close().then(value => this.spinner.fail("Error occured while file watching. Watch stopped."))
+        this.watcher.on("error", (e)=>{
+            console.log("\n"+chalk.redBright(`x Error -`), e.message)
+            if (e.code==="EPERM") {
+                return
+            }
+            this.failWatch()
         })
 
         process.on('exit',()=>{
