@@ -63,7 +63,10 @@ class Watcher{
         }
 
 
-        const proj_pack_path = Project.resolve(Project.config.pack_name);
+        const proj_pack_path = path.join(
+            Project.resolve(Project.config.pack_name),
+            "/**/*.{png,json,fsh,vsh,glsl,mcmeta}"
+        );
 
         this.spinner.start([
             "Watching",
@@ -73,11 +76,13 @@ class Watcher{
         ].join(" "))
 
         this.watcher = chokidar.watch(proj_pack_path,{
+
             awaitWriteFinish: {
                 pollInterval:100,
                 stabilityThreshold:500
             },
             persistent:true,
+            disableGlobbing:false
         });
 
         this.watcher.on("add", (path_)=>{
