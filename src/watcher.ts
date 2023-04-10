@@ -63,10 +63,8 @@ class Watcher{
         }
 
 
-        const proj_pack_path = path.join(
-            Project.resolve(Project.config.pack_name),
-            "/**/*.{png,json,fsh,vsh,glsl,mcmeta}"
-        );
+        const proj_pack_path = Project.resolve(Project.config.pack_name)
+
 
         this.spinner.start([
             "Watching",
@@ -82,7 +80,8 @@ class Watcher{
                 stabilityThreshold:500
             },
             persistent:true,
-            disableGlobbing:false
+            disableGlobbing:false,
+            ignored: "**/*[!{.png,.json,.fsh,.vsh,.glsl}]"
         });
 
         this.watcher.on("add", (path_)=>{
