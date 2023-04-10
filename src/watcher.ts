@@ -81,7 +81,13 @@ class Watcher{
             },
             persistent:true,
             disableGlobbing:false,
-            ignored: "**/*[!{.png,.json,.fsh,.vsh,.glsl}]"
+            ignored:(testString) =>{
+                if (pathIsDir(testString)) {
+                    return false
+                }
+                let regex = new RegExp(/^.*(\.png|\.json|\.fsh|\.vsh|\.glsl)$/)
+                return !regex.test(testString);
+            }
         });
 
         this.watcher.on("add", (path_)=>{
