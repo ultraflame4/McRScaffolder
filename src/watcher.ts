@@ -89,7 +89,7 @@ class Watcher{
                 if (pathIsDir(testString)) {
                     return false
                 }
-                let regex = new RegExp(/^.*(\.png|\.json|\.fsh|\.vsh|\.glsl)$/)
+                let regex = new RegExp(/^.*(\.png|\.json|\.fsh|\.vsh|\.glsl|\.mcmeta)$/)
                 return !regex.test(testString);
             }
         });
