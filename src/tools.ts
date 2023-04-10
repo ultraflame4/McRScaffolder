@@ -2,8 +2,8 @@ import {type VersionSummary} from "./types";
 import chalk from "chalk";
 import pkg from "../package.json";
 import * as fs from "fs";
-import download from "download"
 import path from "path";
+import {DownloaderHelper} from "node-downloader-helper";
 
 
 /**
@@ -37,9 +37,18 @@ export function PrintVersion() {
 export async function DownloadFile(url: string,dest:string):Promise<void> {
     let pathInfo = path.parse(dest)
     fs.mkdirSync(pathInfo.dir,{recursive:true})
-
-    return fs.writeFileSync(dest, await download(url))
-
+    const dl = new DownloaderHelper(url,pathInfo.dir,{
+        fileName:pathInfo.base
+    })
+    dl.on("error", err => {
+        console.log(chalk.red('Download Failed'), err)
+    });
+    try {
+        await dl.start();
+    } catch (e){
+        console.error(chalk.red('Download Failed'), e)
+    }
+    return
 }
 
 export async function ReadJson(file_path):Promise<any>{
