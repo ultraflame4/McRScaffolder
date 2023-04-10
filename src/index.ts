@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import pkg from "../package.json";
 import {program} from "commander";
 import {PrintVersion} from "./tools";
