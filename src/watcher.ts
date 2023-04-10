@@ -17,18 +17,22 @@ class Watcher{
 
     })
     private watcher: chokidar.FSWatcher;
-    private logRaw(prefix: string, desc: string, path_: string) {
+    private logRaw(prefix: string, desc: string, path_: string,ignored:boolean=false) {
         this.spinner.clear()
+        if (ignored){
+            console.log(prefix,desc,chalk.cyan(this.relPath(path_)),chalk.dim.italic("Directory events are ignored."))
+            return
+        }
         console.log(prefix,desc,chalk.cyan(this.relPath(path_)),chalk.dim("Reflected in",this.resolveDest(path_)))
     }
-    private logAdd(path:string,type_:string) {
-        this.logRaw(chalk.greenBright("+"),`Added ${type_}`,path)
+    private logAdd(path:string,type_:string,ignored:boolean=false) {
+        this.logRaw(chalk.greenBright("+"),`Added ${type_}`,path,ignored)
     }
     private logModfied(path:string,type_:string) {
         this.logRaw(chalk.yellowBright("~"),`Modified ${type_}`,path)
     }
-    private logRemove(path:string,type_:string) {
-        this.logRaw(chalk.redBright("-"),`Removed ${type_}`,path)
+    private logRemove(path:string,type_:string,ignored:boolean=false) {
+        this.logRaw(chalk.redBright("-"),`Removed ${type_}`,path,ignored)
     }
 
     /**
@@ -117,17 +121,18 @@ class Watcher{
             if (rel_path === "") {
                 return
             }
-            this.logAdd(path,"directory");
-            fs.mkdirSync(this.resolveDest(path),{recursive:true})
+            this.logAdd(path,"directory",true);
+            // fs.mkdirSync(this.resolveDest(path),{recursive:true})
         });
         this.watcher.on("unlinkDir", (path) => {
             const rel_path = this.relPath(path)
             if (rel_path === "") {
+                console.error("Watched path removed!",path)
                 this.failWatch()
                 return
             }
-            this.logRemove(path,"directory")
-            fs.rmSync(this.resolveDest(path),{ recursive: true, force: true })
+            this.logRemove(path,"directory",true)
+            // fs.rmSync(this.resolveDest(path),{ recursive: true, force: true })
         });
 
         this.watcher.on("error", (e)=>{
