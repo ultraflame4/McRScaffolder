@@ -25,7 +25,7 @@
     "LICENSE"
   ],
   "bin": {
-    "mcrs": "bin/index.js"
+    "mcrs": "node bin/index.js"
   },
   "dependencies": {
     "@types/inquirer": "^9.0.3",
