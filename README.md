@@ -3,7 +3,7 @@
 This tool allows you to easily scaffold (creating the initial file directories) and
 later manage & develop your resource pack.
 
-## Usage & Explainations
+## Usage & Explanations
 
 Install with : `npm install mcrscaffolder`.
 
