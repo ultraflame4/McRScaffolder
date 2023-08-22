@@ -16,18 +16,17 @@ async function choose_version(): Promise<{ download_link: string, version_data: 
     spinner.start()
     let versions = await GetPackVersions()
     spinner.succeed()
-    let answers = await SearchList({
+    let versionChoice = await SearchList({
         name: "version",
         message: "Select target Minecraft version",
-        //@ts-ignore
-        type: "search-list",
         default: versions.findIndex(x => x.stable),
         choices: versions.map(x => { return {
-            id: x.id
+            id: x.id,
+            text: x.name
         }})
     })
 
-    let ver: VersionSummary = versions.find(x => x.id === answers["version"])
+    let ver: VersionSummary = versions.find(x => x.id === versionChoice.id)
 
     let downloadLink = SummaryManager.resolveDownload(ver.id)
     console.log(

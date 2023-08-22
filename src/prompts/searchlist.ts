@@ -26,15 +26,19 @@ export interface ISearchListChoice extends Record<string, any> {
     /**
      * Optional data to add to this choice
      */
-    data?: object
+    data?: object,
 }
 
 export interface ISearchListOptions extends AsyncPromptConfig {
-    name: string
+    name: string,
     /**
      * Array of choices for the user to select from
      */
     choices: Array<ISearchListChoice | Separator>
+    /**
+     * The index of the default choice
+     */
+    default?: number;
 }
 type SearchListItem = ISearchListChoice | Separator
 
@@ -66,7 +70,7 @@ function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListI
  */
 export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((config, done) => {
 
-    const [cursorPosition, setCursorPos] = useState(0)
+    const [cursorPosition, setCursorPos] = useState(config.default??0)
     const [isComplete, setComplete] = useState(false)
     const [query, setQuery] = useState("")
     const prefix = usePrefix()
@@ -105,15 +109,17 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
         if (Separator.isSeparator(choice)) {
             return ` ${choice.separator}`;
         }
-        const lineTxt = choice.text ?? choice.id
+
+        const lineId = chalk.italic(` ${choice.id}`)
+        const lineTxt = choice.text
         if (index == cursorPosition) {
-            return chalk.cyanBright(`${figureSet.pointer} ${lineTxt}`);
+            return chalk.cyanBright(figureSet.pointer) + " " + chalk.greenBright(chalk.bold(lineTxt)) + chalk.dim(lineId)
         }
-        return chalk.dim(`- ${lineTxt}`);
+        return chalk.dim(`${figureSet.dot} ${lineTxt}`);
     }).join("\n")
     const windowedChoices = usePagination(allChoices, {
         active: cursorPosition,
-        pageSize: 4
+        pageSize: 5
     })
 
     const queryText = query.length < 1 ? chalk.dim("[Type to search] (Use arrow keys to select)") : chalk.cyan(query)
