@@ -1,4 +1,3 @@
-import inquirer, {Answers, QuestionCollection} from "inquirer";
 import ora from "ora";
 import SummaryManager from "../resources/SummaryManager";
 import AssetsManager from "../resources/AssetsManager";

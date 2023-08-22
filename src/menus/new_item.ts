@@ -1,7 +1,7 @@
-import inquirer, {Answers, QuestionCollection} from "inquirer";
 import ora from "ora";
 import SummaryManager from "../resources/SummaryManager";
 import AssetsManager from "../resources/AssetsManager";
+import {SearchList} from "../prompts/searchlist";
 
 export async function ask_new_item() {
 
@@ -10,15 +10,12 @@ export async function ask_new_item() {
     const item_list = await SummaryManager.read_items();
     spinner.succeed()
 
-    const item = (await inquirer.prompt(
+    const item = (await SearchList(
         {
-            name:"item_id",
             message: "Select item",
-            //@ts-ignore
-            type: "search-list",
-            choices:item_list
+            choices: item_list.map(x=> {return {id: x}})
         }
-    ))["item_id"]
+    )).id
 
     const spinner2 = ora("Download textures...")
     spinner2.start()

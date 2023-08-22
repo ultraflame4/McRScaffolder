@@ -1,9 +1,9 @@
-import inquirer from "inquirer";
 import ShadersManager from "../resources/ShadersManager";
 import chalk from "chalk";
 import ora from "ora"
 import {ShaderResource} from "../types";
 import AssetsManager from "../resources/AssetsManager";
+import {SearchList} from "../prompts/searchlist";
 
 export async function ask_new_shader() {
 
@@ -17,14 +17,11 @@ export async function ask_new_shader() {
     const shaders = await ShadersManager.getShadersList();
     spinner.succeed()
 
-    const ans = await inquirer.prompt({
-        name:"_",
-        //@ts-ignore
-        type: "search-list",
+    const ans = await SearchList({
         message: "Select shader",
-        choices:shaders.map(x=>{return {name:x.name,value:x}})
+        choices:shaders.map(x=>{return {id:x.name,data:x}})
     })
-    const shader:ShaderResource = ans["_"]
+    const shader = ans.data as ShaderResource
     const spinner2 = ora(`Downloading ${shader.files.length} shader files...`)
     spinner2.start()
     await AssetsManager.downloadAsset(shader.files,"shaders")
