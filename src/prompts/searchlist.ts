@@ -122,7 +122,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
         pageSize: 5
     })
 
-    const queryText = query.length < 1 ? chalk.dim("[Type to search] (Use arrow keys to select)") : chalk.cyan(query)
+    const queryText = query.length < 1 ? chalk.dim("[Type to search] (Use arrow keys to select)") : chalk.cyan(query) + chalk.dim(" Press <enter> to submit")
 
     return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")} ${queryText}\n${windowedChoices}\n${query}`
 })
