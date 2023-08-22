@@ -67,7 +67,8 @@ class Project_ {
      */
     public Initialise(project_root: string, new_config?: McRSConfig) {
         this.#project_root = project_root
-        process.chdir(this.project_root) // Very important, so that all paths resolves to the project root
+
+        // process.chdir(this.project_root) // Very important, so that all paths resolves to the project root
 
         if (new_config) {
             this.#config = new_config
