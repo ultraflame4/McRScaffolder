@@ -7,7 +7,6 @@ import fs from "fs";
 import {Project} from "../project";
 import SummaryManager from "../resources/SummaryManager";
 import {input} from "@inquirer/prompts";
-import inquirer from "inquirer"
 import {SearchList} from "../prompts/searchlist";
 /**
  * Asks the user for the target minecraft version and returns the download link for that version summary

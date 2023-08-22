@@ -4,9 +4,11 @@ import {
     isEnterKey, isUpKey,
     Separator,
     useKeypress,
-    usePagination,
+    usePagination, usePrefix,
     useState
 } from "@inquirer/prompts";
+import chalk from "chalk";
+import figureSet from "figures"
 
 /**
  * A choice in the search list
@@ -46,6 +48,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
 
     const [cursorPosition, setCursorPos] = useState(0)
     const [isComplete, setComplete] = useState(false)
+    const prefix = usePrefix()
 
     const choice = config.choices[cursorPosition] as ISearchListChoice
 
@@ -71,14 +74,16 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
         if (Separator.isSeparator(choice)) {
             return ` ${choice.separator}`;
         }
-        const line = choice.text ?? choice.id
-
-        return `- ${line}`
+        const lineTxt = choice.text ?? choice.id
+        if (index == cursorPosition) {
+            return chalk.cyanBright(`${figureSet.pointer} ${lineTxt}`);
+        }
+        return chalk.dim(`- ${lineTxt}`);
     }).join("\n")
     const windowedChoices = usePagination(allChoices, {
         active: cursorPosition,
         pageSize: 5
     })
 
-    return windowedChoices
+    return `${prefix} ${chalk.bold(config.message)} ${chalk.dim("( Use arrow keys )")}\n${windowedChoices}`
 })
