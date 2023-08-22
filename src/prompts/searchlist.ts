@@ -39,6 +39,10 @@ export interface ISearchListOptions extends AsyncPromptConfig {
      * The index of the default choice
      */
     default?: number;
+    /**
+     * When true, allows canceling. Will return null on cancel
+     */
+    allowCancel?: boolean
 }
 
 type SearchListItem = ISearchListChoice | Separator
@@ -72,8 +76,12 @@ function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListI
     return results.map(x => x.item)
 }
 
+const cancelChoiceId = "Cancel or Exits this selection"
 /**
- * Returns chosen choice
+ * This displays a list, similar to select list,
+ * However this includes a search bar ath the bottom.
+ *
+ * Returns null if user cancels
  */
 export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((config, done) => {
 
@@ -83,6 +91,9 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
     const prefix = usePrefix()
 
     const filteredChoices = fuzzySearch(query, config.choices)
+    if (config.allowCancel) {
+        filteredChoices.push({text:"Back", id:cancelChoiceId})
+    }
     const choice = filteredChoices[cursorPosition] as ISearchListChoice;
 
     if (isComplete) {
@@ -94,7 +105,12 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
 
         if (isEnterKey(key)) {
             if (choice == null) return;
+
             setComplete(true)
+            if (choice.id == cancelChoiceId) {
+                done(null)
+                return;
+            }
             done(choice)
         } else if (isUpKey(key) || isDownKey(key)) {
             const direction = isUpKey(key) ? -1 : 1;
@@ -129,7 +145,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
         pageSize: 5
     })
 
-    const helpText = chalk.dim("(Press <enter> to submit) (Use arrow keys to select)")
+    const helpText = chalk.dim("(Press <enter> to submit, Use arrow keys to select)")
     const queryText = "Search: " + (query.length < 1 ? chalk.italic.dim("Type to search") : `${query}`)
     return `${prefix} ${chalk.bold(config.message)} ${helpText}\n${windowedChoices}\n${queryText}`
 })

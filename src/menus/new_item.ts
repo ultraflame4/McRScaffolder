@@ -13,13 +13,15 @@ export async function ask_new_item() {
     const item = (await SearchList(
         {
             message: "Select item",
-            choices: item_list.map(x=> {return {id: x}})
+            choices: item_list.map(x=> {return {id: x}}),
+            allowCancel: true
         }
-    )).id
+    ))
+    if (item == null) return
 
     const spinner2 = ora("Download textures...")
     spinner2.start()
-    await AssetsManager.downloadTextures(...await SummaryManager.get_item_textures(item))
+    await AssetsManager.downloadTextures(...await SummaryManager.get_item_textures(item.id))
     spinner2.succeed()
 
     return

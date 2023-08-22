@@ -19,8 +19,10 @@ export async function ask_new_shader() {
 
     const ans = await SearchList({
         message: "Select shader",
-        choices:shaders.map(x=>{return {id:x.name,data:x}})
+        choices:shaders.map(x=>{return {id:x.name,data:x}}),
+        allowCancel: true
     })
+    if (ans === null) return;
     const shader = ans.data as ShaderResource
     const spinner2 = ora(`Downloading ${shader.files.length} shader files...`)
     spinner2.start()
