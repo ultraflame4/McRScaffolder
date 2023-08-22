@@ -7,13 +7,7 @@ import chalk from "chalk";
 import {start_menu} from "./menus/general_menus";
 import {Project} from "./project";
 import {create_project_menu} from "./menus/create_project";
-import inquirer from "inquirer";
-import inquirer_search_list from "inquirer-search-list"
-
 import watcher from "./watcher";
-
-inquirer.registerPrompt('search-list', inquirer_search_list);
-
 
 PrintVersion()
 program.description(pkg.description)
