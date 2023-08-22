@@ -48,11 +48,6 @@ function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListI
 
     const fuse = new Fuse<SearchListItem>(choices, {
         isCaseSensitive: false,
-        useExtendedSearch: true,
-        findAllMatches: true,
-        shouldSort: true,
-        minMatchCharLength: 0,
-        includeMatches: true,
         keys: [{
             name: "text",
             getFn(x){
@@ -62,7 +57,7 @@ function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListI
         }]
     })
     const results = fuse.search(`${query}`)
-    console.log(results.length)
+
     return results.map(x=>x.item)
 }
 
@@ -83,7 +78,9 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
         return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")}` + chalk.cyan(choice.text) + " " + chalk.dim(`(id: ${choice.id})`)
     }
 
-    useKeypress(key => {
+    useKeypress((key, rl) => {
+        if (isComplete) return;
+
         if (isEnterKey(key)) {
             if (choice == null) return;
             setComplete(true)
@@ -98,12 +95,8 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
                 if (newCursorPos > filteredChoices.length - 1) newCursorPos = 0
             }
             setCursorPos(newCursorPos)
-        } else if (isBackspaceKey(key)) {
-            setQuery(query.substring(0, query.length - 1))
-        } else if (isSpaceKey(key)) {
-            setQuery(query + " ")
-        } else {
-            setQuery(query + key.name)
+        }else {
+            setQuery(rl.line)
         }
     });
 
@@ -125,5 +118,5 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
 
     const queryText = query.length < 1 ? chalk.dim("[Type to search] (Use arrow keys to select)") : chalk.cyan(query)
 
-    return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")} ${queryText}\n${windowedChoices}\n`
+    return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")} ${queryText}\n${windowedChoices}\n${query}`
 })
