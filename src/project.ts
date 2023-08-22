@@ -65,7 +65,7 @@ class Project_ {
      * @param new_config Optional; The config for the project. When undefined, attempts to load the config with this.loadConfig()
      * @return {boolean} Returns true if config is successfully set or loaded.
      */
-    public Initialise(project_root: string, new_config?: McRSConfig) {
+    public Initialise(project_root: string, new_config?: McRSConfig): boolean {
         this.#project_root = project_root
 
         // process.chdir(this.project_root) // Very important, so that all paths resolves to the project root

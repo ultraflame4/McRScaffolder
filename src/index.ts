@@ -27,13 +27,12 @@ program.command("open")
         ".")
     .action(async (raw_project_path: string) => {
         const project_path = path.resolve(raw_project_path);
-        console.log(chalk.whiteBright("Project root set to:"), chalk.greenBright(project_path))
-
-
+        console.log(chalk.whiteBright("Resolved path to:"), chalk.greenBright(project_path))
         if (!Project.Initialise(project_path)) {
+            console.log(chalk.greenBright("No existing project found. Creating new project..."))
             await create_project_menu(project_path)
         }
-
+        console.log(chalk.whiteBright("Opening project at"), chalk.greenBright(project_path))
         await start_menu()
     })
 
