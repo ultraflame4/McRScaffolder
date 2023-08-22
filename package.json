@@ -1,6 +1,6 @@
 {
   "name": "mcrscaffolder",
-  "version": "0.0.7",
+  "version": "0.1.0-alpha",
   "description": "",
   "main": "bin/index.js",
   "type": "module",
