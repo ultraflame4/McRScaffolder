@@ -57,6 +57,7 @@ function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListI
 
     const fuse = new Fuse<SearchListItem>(choices, {
         isCaseSensitive: false,
+        shouldSort: true,
         keys: [{
             name: "text",
             getFn(x) {
@@ -76,7 +77,7 @@ function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListI
     return results.map(x => x.item)
 }
 
-const cancelChoiceId = "Cancel or Exits this selection"
+const cancelChoiceId = "Cancel or Exits this selection ( :quit | : q)"
 /**
  * This displays a list, similar to select list,
  * However this includes a search bar ath the bottom.
@@ -92,7 +93,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
 
     const filteredChoices = fuzzySearch(query, config.choices)
     if (config.allowCancel) {
-        filteredChoices.push({text:"Back", id:cancelChoiceId})
+        filteredChoices.push({text:"Quit", id:cancelChoiceId})
     }
     const choice = filteredChoices[cursorPosition] as ISearchListChoice;
 
@@ -146,6 +147,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
     })
 
     const helpText = chalk.dim("(Press <enter> to submit, Use arrow keys to select)")
-    const queryText = "Search: " + (query.length < 1 ? chalk.italic.dim("Type to search") : `${query}`)
+    const placeholder = "Type to search" + (config.allowCancel ? " / Type :quit to exit" : "")
+    const queryText = "Search: " + (query.length < 1 ? chalk.italic.dim(placeholder) : `${query}`)
     return `${prefix} ${chalk.bold(config.message)} ${helpText}\n${windowedChoices}\n${queryText}`
 })
