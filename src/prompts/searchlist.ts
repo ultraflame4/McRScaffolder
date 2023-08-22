@@ -98,7 +98,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
     const choice = filteredChoices[cursorPosition] as ISearchListChoice;
 
     if (isComplete) {
-        return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")}` + chalk.cyan(choice.text) + " " + chalk.dim(`(id: ${choice.id})`)
+        return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")} ` + chalk.cyan(choice.text) + " " + chalk.dim(`(id: ${choice.id})`)
     }
 
     useKeypress((key, rl) => {
