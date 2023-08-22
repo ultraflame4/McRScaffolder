@@ -90,7 +90,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
     }).join("\n")
     const windowedChoices = usePagination(allChoices, {
         active: cursorPosition,
-        pageSize: 5
+        pageSize: 4
     })
 
     const queryText = query.length < 1 ? chalk.dim("[Type to search] (Use arrow keys to select)") : chalk.cyan(query)
