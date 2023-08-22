@@ -53,7 +53,7 @@ function isSelectableChoice(choice: SearchListItem) {
 
 
 function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListItem[] {
-    if (query.length == 0) return choices
+    if (query.length == 0) return [...choices] // return duplicate so that it does not modify original
 
     const fuse = new Fuse<SearchListItem>(choices, {
         isCaseSensitive: false,
@@ -73,7 +73,6 @@ function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListI
         }]
     })
     const results = fuse.search(`${query}`)
-
     return results.map(x => x.item)
 }
 
