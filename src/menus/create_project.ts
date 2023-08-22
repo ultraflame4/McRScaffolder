@@ -17,7 +17,6 @@ async function choose_version(): Promise<{ download_link: string, version_data: 
     let versions = await GetPackVersions()
     spinner.succeed()
     let versionChoice = await SearchList({
-        name: "version",
         message: "Select target Minecraft version",
         default: versions.findIndex(x => x.stable),
         choices: versions.map(x => { return {
