@@ -8,6 +8,7 @@ import {Project} from "../project";
 import SummaryManager from "../resources/SummaryManager";
 import {input} from "@inquirer/prompts";
 import inquirer from "inquirer"
+import {SearchList} from "../prompts/searchlist";
 /**
  * Asks the user for the target minecraft version and returns the download link for that version summary
  */
@@ -16,13 +17,15 @@ async function choose_version(): Promise<{ download_link: string, version_data: 
     spinner.start()
     let versions = await GetPackVersions()
     spinner.succeed()
-    let answers = await inquirer.prompt({
+    let answers = await SearchList({
         name: "version",
         message: "Select target Minecraft version",
         //@ts-ignore
         type: "search-list",
         default: versions.findIndex(x => x.stable),
-        choices: versions.map(x => x.id)
+        choices: versions.map(x => { return {
+            id: x.id
+        }})
     })
 
     let ver: VersionSummary = versions.find(x => x.id === answers["version"])
