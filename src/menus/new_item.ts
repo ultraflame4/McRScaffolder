@@ -1,6 +1,6 @@
 import ora from "ora";
 import SummaryManager from "../resources/SummaryManager";
-import AssetsManager from "../resources/AssetsManager";
+import AssetsManager from "../resources/AssetsDownloader";
 import {SearchList} from "../prompts/searchlist";
 
 export async function ask_new_item() {

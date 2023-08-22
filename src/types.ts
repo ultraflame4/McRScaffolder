@@ -59,6 +59,7 @@ export class ResourceName {
 
     /**
      * Converts this resource name into a path relative to the resource pack root. (where pack.mcmeta is)
+     * Example: this.rel_path("textures") will return ./assets/minecraft/textures/block/wool.png
      * @param ctx The context for the resource name, eg. textures to get filepath for a texture
      */
     public rel_path(ctx: string) {
@@ -80,6 +81,14 @@ export class ResourceName {
             base: '',
             ext: ext
         });
+    }
+
+    /**
+     * Returns the filename for this resource name (ext not specified)
+     * @param ext
+     */
+    public filename(ext:string|null =null){
+        return this.path[this.path.length-1]+ext??""
     }
 }
 

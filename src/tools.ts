@@ -34,7 +34,7 @@ export function PrintVersion() {
  * @param url
  * @param dest
  */
-export async function DownloadFile(url: string,dest:string):Promise<void> {
+export async function DownloadFile(url: string,dest:string):Promise<string> {
     let pathInfo = path.parse(dest)
     fs.mkdirSync(pathInfo.dir,{recursive:true})
     const dl = new DownloaderHelper(url,pathInfo.dir,{
@@ -48,7 +48,7 @@ export async function DownloadFile(url: string,dest:string):Promise<void> {
     } catch (e){
         console.error(chalk.red('Download Failed'), e)
     }
-    return
+    return dest
 }
 
 export async function ReadJson(file_path):Promise<any>{

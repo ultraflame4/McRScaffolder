@@ -65,7 +65,7 @@ class SummaryManager {
     }
     /**
      * Returns a list of resources names for specified item's textures
-     * @param item_id
+     * @param block_id
      */
     public async get_block_textures(block_id:string): Promise<ResourceName[]> {
         let model = (await ReadJson(this.resolve("assets","model","data.json")))[`block/${block_id}`]

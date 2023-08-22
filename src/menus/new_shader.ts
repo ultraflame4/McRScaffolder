@@ -2,7 +2,7 @@ import ShadersManager from "../resources/ShadersManager";
 import chalk from "chalk";
 import ora from "ora"
 import {ShaderResource} from "../types";
-import AssetsManager from "../resources/AssetsManager";
+import AssetsManager from "../resources/AssetsDownloader";
 import {SearchList} from "../prompts/searchlist";
 
 export async function ask_new_shader() {

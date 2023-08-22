@@ -3,27 +3,6 @@ import path from "path";
 import fs from "fs";
 import {GetVersionTag, resolvePathEnvVars} from "./tools";
 
-/**
- * Represents an asset in the project that needs to be build and placed into a Resourcepack.
- */
-export abstract class ProjectAsset {
-    /** Resource name this asset represents.*/
-    resourceName: ResourceName
-
-    private asset_namespace: string // Namespace of this asset to bn
-    private asset_path: string // File path
-    private project: Project_;
-    constructor(resourceName: ResourceName, project: Project_,asset_namespace,asset_path) {
-        this.resourceName=resourceName
-        this.project=project
-        this.asset_namespace=asset_namespace
-        this.asset_path=asset_path
-    }
-
-    public get assetPath(): string{
-        return this.project.resolve('src', this.asset_namespace, this.asset_path)
-    }
-}
 
 
 export class Project_ {
