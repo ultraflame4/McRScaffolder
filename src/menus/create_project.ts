@@ -1,5 +1,4 @@
 import {McRSConfig, PackMcMeta, VersionSummary} from "../types";
-import inquirer, {Answers} from "inquirer";
 import {GetPackVersions, pathIsDir, resolvePathEnvVars} from "../tools";
 import chalk from "chalk";
 import ora from "ora"
@@ -7,8 +6,8 @@ import path from "path";
 import fs from "fs";
 import {Project} from "../project";
 import SummaryManager from "../resources/SummaryManager";
-import {transform} from "esbuild";
-
+import {input} from "@inquirer/prompts";
+import inquirer from "inquirer"
 /**
  * Asks the user for the target minecraft version and returns the download link for that version summary
  */
@@ -24,9 +23,9 @@ async function choose_version(): Promise<{ download_link: string, version_data: 
         type: "search-list",
         default: versions.findIndex(x => x.stable),
         choices: versions.map(x => x.id)
-
     })
-    let ver:VersionSummary = versions.find(x=>x.id===answers["version"])
+
+    let ver: VersionSummary = versions.find(x => x.id === answers["version"])
 
     let downloadLink = SummaryManager.resolveDownload(ver.id)
     console.log(
@@ -55,49 +54,36 @@ export function ScaffoldBasicComponents() {
     fs.writeFileSync(path.resolve(resourcepack_root, "pack.mcmeta"), JSON.stringify(pack_mcmeta, null, 3))
 }
 
+
 export async function create_project_menu(project_root: string): Promise<McRSConfig> {
-    const answers = await inquirer.prompt([
-        {
-            name: "name",
-            message: "Project Name",
-            type: "input"
-        },
-        {
-            name: "description",
-            message: "Description",
-            type: "input"
-        },
-        {
-            name: "mc_respack",
-            message: "Minecraft resource pack folder",
-            default: "%appdata%/.minecraft/resourcepacks",
-            async validate(input: string): Promise<string | boolean> {
-
-                if (!pathIsDir(path.resolve(resolvePathEnvVars(input)))) {
-                    return [
-                        chalk.yellow(input),
-                        chalk.redBright("could not be found!"),
-                        "Please ensure the folder exists and the path is correct!",
-                        chalk.cyan.dim("(This is a precaution against mistakes!)")
-                    ].join(" ")
-
-                }
-                return true
-            },
-            type: "input"
+    const project_name = await input({message: "Enter Project Name"})
+    const project_desc = await input({message: "Enter Project Description"})
+    const mc_resourcepack = await input({
+        message: "Minecraft resource pack folder location",
+        default: "%appdata%/.minecraft/resourcepacks",
+        async validate(input: string): Promise<string | boolean> {
+            if (!pathIsDir(path.resolve(resolvePathEnvVars(input)))) {
+                return [
+                    chalk.yellow(input),
+                    chalk.redBright("could not be found!"),
+                    "Please ensure the folder exists and the path is correct!",
+                    chalk.cyan.dim("(This is a precaution against mistakes!)")
+                ].join(" ")
+            }
+            return true
         }
-    ])
+    })
 
     const {download_link, version_data} = await choose_version()
 
     const new_config: McRSConfig = {
-        description: answers.description,
+        description: project_desc,
         pack_format: version_data.resource_pack_version,
-        pack_name: answers.name,
+        pack_name: project_name,
         summary_download: download_link,
         version_id: version_data.id,
         version_release_time: version_data.release_time,
-        mc_resourcepack_folder: answers.mc_respack
+        mc_resourcepack_folder: mc_resourcepack
     }
 
     const spinner = ora("Initialising project...")
