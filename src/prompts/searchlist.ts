@@ -5,11 +5,11 @@ import {
     Separator,
     useKeypress,
     usePagination, usePrefix,
-    useState, isSpaceKey
+    useState, isSpaceKey, useEffect
 } from "@inquirer/prompts";
 import chalk from "chalk";
 import figureSet from "figures"
-import {isAscii} from "buffer";
+import Fuse from "fuse.js"
 
 /**
  * A choice in the search list
@@ -36,10 +36,34 @@ export interface ISearchListOptions extends AsyncPromptConfig {
      */
     choices: Array<ISearchListChoice | Separator>
 }
+type SearchListItem = ISearchListChoice | Separator
 
-
-function isSelectableChoice(choice: ISearchListChoice | Separator) {
+function isSelectableChoice(choice: SearchListItem) {
     return (!Separator.isSeparator(choice)) && choice != null
+}
+
+
+function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListItem[] {
+    if (query.length == 0) return  choices
+
+    const fuse = new Fuse<SearchListItem>(choices, {
+        isCaseSensitive: false,
+        useExtendedSearch: true,
+        findAllMatches: true,
+        shouldSort: true,
+        minMatchCharLength: 0,
+        includeMatches: true,
+        keys: [{
+            name: "text",
+            getFn(x){
+                if (x instanceof Separator) return "----separator----"
+                return x.text??x.id
+            }
+        }]
+    })
+    const results = fuse.search(`${query}`)
+    console.log(results.length)
+    return results.map(x=>x.item)
 }
 
 /**
@@ -52,20 +76,26 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
     const [query, setQuery] = useState("")
     const prefix = usePrefix()
 
-    const choice = config.choices[cursorPosition] as ISearchListChoice
+    const filteredChoices = fuzzySearch(query,config.choices)
+    const choice = filteredChoices[cursorPosition] as ISearchListChoice;
+
+    if (isComplete) {
+        return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")}` + chalk.cyan(choice.text) + " " + chalk.dim(`(id: ${choice.id})`)
+    }
 
     useKeypress(key => {
         if (isEnterKey(key)) {
+            if (choice == null) return;
             setComplete(true)
             done(choice)
         } else if (isUpKey(key) || isDownKey(key)) {
             const direction = isUpKey(key) ? -1 : 1;
             let newCursorPos = cursorPosition + direction;
-            for (let i = 0; i < config.choices.length; i++) {
-                if (isSelectableChoice(config.choices[newCursorPos])) break;
+            for (let i = 0; i < filteredChoices.length; i++) {
+                if (isSelectableChoice(filteredChoices[newCursorPos])) break;
                 newCursorPos += direction
-                if (newCursorPos < 0) newCursorPos = config.choices.length -1
-                if (newCursorPos > config.choices.length - 1) newCursorPos = 0
+                if (newCursorPos < 0) newCursorPos = filteredChoices.length - 1
+                if (newCursorPos > filteredChoices.length - 1) newCursorPos = 0
             }
             setCursorPos(newCursorPos)
         } else if (isBackspaceKey(key)) {
@@ -75,10 +105,10 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
         } else {
             setQuery(query + key.name)
         }
-    })
+    });
 
 
-    const allChoices = config.choices.map((choice, index) => {
+    const allChoices = filteredChoices.map((choice, index) => {
         if (Separator.isSeparator(choice)) {
             return ` ${choice.separator}`;
         }
@@ -95,5 +125,5 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
 
     const queryText = query.length < 1 ? chalk.dim("[Type to search] (Use arrow keys to select)") : chalk.cyan(query)
 
-    return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")} ${queryText}\n${windowedChoices}`
+    return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")} ${queryText}\n${windowedChoices}\n`
 })
