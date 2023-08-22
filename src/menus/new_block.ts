@@ -3,6 +3,7 @@ import ora from "ora";
 import SummaryManager from "../resources/SummaryManager";
 import AssetsManager from "../resources/AssetsManager";
 import chalk from "chalk";
+import {SearchList} from "../prompts/searchlist";
 
 export async function ask_new_block() {
 
@@ -11,15 +12,17 @@ export async function ask_new_block() {
     const item_list = await SummaryManager.read_blocks();
     spinner.succeed()
 
-    const block = (await inquirer.prompt(
+    const block = (await SearchList(
         {
-            name:"block_id",
             message: "Select block",
-            //@ts-ignore
-            type: "search-list",
-            choices:item_list
+            choices:item_list.map(x=>{
+                return {
+                    id: x,
+                    text: x
+                }
+            })
         }
-    ))["block_id"]
+    )).id
 
     let textures = await SummaryManager.get_block_textures(block)
     if (textures.length < 1) {

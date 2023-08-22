@@ -30,7 +30,7 @@ export interface ISearchListChoice extends Record<string, any> {
 }
 
 export interface ISearchListOptions extends AsyncPromptConfig {
-    name: string,
+
     /**
      * Array of choices for the user to select from
      */
@@ -40,6 +40,7 @@ export interface ISearchListOptions extends AsyncPromptConfig {
      */
     default?: number;
 }
+
 type SearchListItem = ISearchListChoice | Separator
 
 function isSelectableChoice(choice: SearchListItem) {
@@ -48,21 +49,27 @@ function isSelectableChoice(choice: SearchListItem) {
 
 
 function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListItem[] {
-    if (query.length == 0) return  choices
+    if (query.length == 0) return choices
 
     const fuse = new Fuse<SearchListItem>(choices, {
         isCaseSensitive: false,
         keys: [{
             name: "text",
-            getFn(x){
+            getFn(x) {
                 if (x instanceof Separator) return "----separator----"
-                return x.text??x.id
+                return x.text ?? x.id
+            }
+        }, {
+            name: "id",
+            getFn(x) {
+                if (x instanceof Separator) return "----separator----"
+                return x.id
             }
         }]
     })
     const results = fuse.search(`${query}`)
 
-    return results.map(x=>x.item)
+    return results.map(x => x.item)
 }
 
 /**
@@ -70,12 +77,12 @@ function fuzzySearch(query: string, choices: Array<SearchListItem>): SearchListI
  */
 export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((config, done) => {
 
-    const [cursorPosition, setCursorPos] = useState(config.default??0)
+    const [cursorPosition, setCursorPos] = useState(config.default ?? 0)
     const [isComplete, setComplete] = useState(false)
     const [query, setQuery] = useState("")
     const prefix = usePrefix()
 
-    const filteredChoices = fuzzySearch(query,config.choices)
+    const filteredChoices = fuzzySearch(query, config.choices)
     const choice = filteredChoices[cursorPosition] as ISearchListChoice;
 
     if (isComplete) {
@@ -99,7 +106,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
                 if (newCursorPos > filteredChoices.length - 1) newCursorPos = 0
             }
             setCursorPos(newCursorPos)
-        }else {
+        } else {
             setQuery(rl.line)
         }
     });
@@ -122,7 +129,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
         pageSize: 5
     })
 
-    const queryText = query.length < 1 ? chalk.dim("[Type to search] (Use arrow keys to select)") : chalk.cyan(query) + chalk.dim(" Press <enter> to submit")
-
-    return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")} ${queryText}\n${windowedChoices}\n${query}`
+    const helpText = chalk.dim("(Press <enter> to submit) (Use arrow keys to select)")
+    const queryText = "Search: " + (query.length < 1 ? chalk.italic.dim("Type to search") : `${query}`)
+    return `${prefix} ${chalk.bold(config.message)} ${helpText}\n${windowedChoices}\n${queryText}`
 })

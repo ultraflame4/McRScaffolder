@@ -1,4 +1,3 @@
-import inquirer from "inquirer";
 import chalk from "chalk";
 import ora from 'ora';
 import SummaryManager from "../resources/SummaryManager";
@@ -6,19 +5,19 @@ import {ask_new_item} from "./new_item";
 import {ask_new_block} from "./new_block";
 import {ask_new_texture} from "./new_texture";
 import {ask_new_shader} from "./new_shader";
+import {select} from "@inquirer/prompts";
 
 
 
 async function settings_menu() {
-    const answer = (await inquirer.prompt({
-        name: "Settings",
-        type: "list",
+    const answer = (await select({
+        message: "Settings",
         choices: [
             {name: "Download Summary", value: "dlsum"},
             {name: "See summary", value: "seesum"},
             {name: "Back", value: "back"},
         ]
-    }))["Settings"]
+    }))
 
     if (answer === "back") {
         return
@@ -35,19 +34,46 @@ async function settings_menu() {
 
 }
 
+async function add_menu() {
+    const answer = await select(
+        {
+            message: "Main Menu",
+            choices: [
+                {name: "Add Item", value: "new_item"},
+                {name: "Add Block", value: "new_block"},
+                {name: "Add Texture", value: "new_texture"},
+                {name: "Add Shader", value: "new_shader"},
+                {name: "Back", value: "back"},
+            ]
+        }
+    )
+    switch (answer) {
+        case "new_item":
+            await ask_new_item()
+            break;
+        case "new_block":
+            await ask_new_block()
+            break;
+        case "new_texture":
+            await ask_new_texture()
+            break;
+        case "new_shader":
+            await ask_new_shader()
+            break;
+        case "back":
+            return
+    }
+}
+
 export async function start_menu() {
     let run = true
 
     while (run) {
-        const answers = await inquirer.prompt(
+        const answers = await select(
             {
-                name: "Main Menu",
-                type: "list",
+                message: "Main Menu",
                 choices: [
-                    {name: "New Item", value: "new_item"},
-                    {name: "New Block", value: "new_block"},
-                    {name: "New Texture", value: "new_texture"},
-                    {name: "New Shader", value: "new_shader"},
+                    {name: "Add", value: "add"},
                     {name: "Watch & Sync", value: "watch"},
                     {name: "Settings", value: "settings"},
                     {name: "Exit (Ctrl+C)", value: "exit"},
@@ -55,18 +81,9 @@ export async function start_menu() {
             }
         )
 
-        switch (answers["Main Menu"]) {
-            case "new_item":
-                await ask_new_item()
-                break;
-            case "new_block":
-                await ask_new_block()
-                break;
-            case "new_texture":
-                await ask_new_texture()
-                break;
-            case "new_shader":
-                await ask_new_shader()
+        switch (answers) {
+            case "add":
+                await add_menu()
                 break;
             case "watch":
                 console.log(chalk.cyan.bold("i"),
