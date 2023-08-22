@@ -81,7 +81,7 @@ class SummaryManager {
 
         let modelData = await ReadJson(this.resolve("assets", "model", "data.json"))
 
-        let resourceNames: ResourceName[] = []
+        let textures: string[] = []
         models.forEach(model_resource => {
             // The model in the models array still contain the minecraft: namespace.
             // The keys in the model data json does not. So we remove it
@@ -93,13 +93,12 @@ class SummaryManager {
             }
 
             Object.values(model["textures"]).forEach((x: string) => {
-                let resourceName = ResourceName.fromString(x)
-                if (!resourceNames.includes(resourceName)){
-                    resourceNames.push(resourceName)
+                if (!textures.includes(x)){
+                    textures.push(x)
                 }
             })
         })
-        return resourceNames
+        return textures.map(x=>ResourceName.fromString(x))
     }
 
 }
