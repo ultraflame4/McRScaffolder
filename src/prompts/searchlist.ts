@@ -1,14 +1,15 @@
 import {
     AsyncPromptConfig,
     createPrompt, isDownKey,
-    isEnterKey, isUpKey,
+    isEnterKey, isUpKey, isBackspaceKey,
     Separator,
     useKeypress,
     usePagination, usePrefix,
-    useState
+    useState, isSpaceKey
 } from "@inquirer/prompts";
 import chalk from "chalk";
 import figureSet from "figures"
+import {isAscii} from "buffer";
 
 /**
  * A choice in the search list
@@ -48,6 +49,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
 
     const [cursorPosition, setCursorPos] = useState(0)
     const [isComplete, setComplete] = useState(false)
+    const [query, setQuery] = useState("")
     const prefix = usePrefix()
 
     const choice = config.choices[cursorPosition] as ISearchListChoice
@@ -62,10 +64,16 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
             for (let i = 0; i < config.choices.length; i++) {
                 if (isSelectableChoice(config.choices[newCursorPos])) break;
                 newCursorPos += direction
-                if (newCursorPos < 0) newCursorPos = config.choices.length
+                if (newCursorPos < 0) newCursorPos = config.choices.length -1
                 if (newCursorPos > config.choices.length - 1) newCursorPos = 0
             }
             setCursorPos(newCursorPos)
+        } else if (isBackspaceKey(key)) {
+            setQuery(query.substring(0, query.length - 1))
+        } else if (isSpaceKey(key)) {
+            setQuery(query + " ")
+        } else {
+            setQuery(query + key.name)
         }
     })
 
@@ -85,5 +93,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
         pageSize: 5
     })
 
-    return `${prefix} ${chalk.bold(config.message)} ${chalk.dim("( Use arrow keys )")}\n${windowedChoices}`
+    const queryText = query.length < 1 ? chalk.dim("[Type to search] (Use arrow keys to select)") : chalk.cyan(query)
+
+    return `${prefix} ${chalk.bold(config.message)}${chalk.greenBright(":")} ${queryText}\n${windowedChoices}`
 })
