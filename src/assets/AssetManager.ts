@@ -3,7 +3,7 @@ import fs from "fs";
 import {Project} from "../core/project";
 
 class AssetRegistry<T> {
-    public items: T[] = []
+    public assets: T[] = []
     private registry_name: string
 
     constructor(registry_name) {
@@ -11,7 +11,7 @@ class AssetRegistry<T> {
     }
 
     public add(asset: T): T {
-        this.items.push(asset)
+        this.assets.push(asset)
         return asset
     }
 
@@ -20,20 +20,14 @@ class AssetRegistry<T> {
     }
 
     public write() {
-        fs.writeFileSync(this.filepath, JSON.stringify(this.items,null, 3))
+        fs.writeFileSync(this.filepath, JSON.stringify(this.assets,null, 3))
     }
 
 }
 
 class AssetManager {
-
-
     public readonly blocks = new AssetRegistry<BlockAsset>("blocks")
 
-
-    public Write() {
-        this.blocks.write()
-    }
 }
 
 export default new AssetManager()
