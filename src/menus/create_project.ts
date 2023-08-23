@@ -4,7 +4,7 @@ import chalk from "chalk";
 import ora from "ora"
 import path from "path";
 import fs from "fs";
-import {Project} from "../project";
+import {Project} from "../project/project";
 import SummaryManager from "../resources/SummaryManager";
 import {input} from "@inquirer/prompts";
 import {SearchList} from "../prompts/searchlist";

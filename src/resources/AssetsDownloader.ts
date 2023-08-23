@@ -1,6 +1,6 @@
 import {ResourceName} from "../types";
 import {DownloadFile, GetVersionTag} from "../tools";
-import {Project} from "../project";
+import {Project} from "../project/project";
 import path from "path";
 
 class AssetsDownloader{

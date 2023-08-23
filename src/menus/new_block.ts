@@ -3,8 +3,8 @@ import SummaryManager from "../resources/SummaryManager";
 import AssetsManager from "../resources/AssetsDownloader";
 import chalk from "chalk";
 import {SearchList} from "../prompts/searchlist";
-import TextureManager, {BlockTextureAsset} from "../resources/TextureManager";
-import {Project} from "../project";
+import TextureManager, {BlockTextureAsset} from "../project/TextureManager";
+import {Project} from "../project/project";
 
 export async function ask_new_block() {
 
@@ -16,7 +16,9 @@ export async function ask_new_block() {
     const block = (await SearchList(
         {
             message: "Select block",
-            choices:item_list.map(x=>{return {id: x, text: x}}),
+            choices: item_list.map(x => {
+                return {id: x, text: x}
+            }),
             allowCancel: true
         }
     ))
@@ -32,6 +34,7 @@ export async function ask_new_block() {
     const spinner2 = ora(`Downloading ${textures.length} block textures...`);
     spinner2.start()
     await blockAsset.downloadTextures()
+    blockAsset.saveConfig();
     spinner2.succeed()
 
 

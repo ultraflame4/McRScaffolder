@@ -1,4 +1,4 @@
-import {Project} from "../project";
+import {Project} from "../project/project";
 import fs from "fs";
 import path from "path";
 import extract from "extract-zip";

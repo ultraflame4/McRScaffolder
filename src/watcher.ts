@@ -1,4 +1,4 @@
-import {Project} from "./project";
+import {Project} from "./project/project";
 import chokidar from "chokidar"
 import ora from "ora"
 import chalk from "chalk";

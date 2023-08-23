@@ -1,4 +1,4 @@
-import {Project} from "./project";
+import {Project} from "./project/project";
 import path from "path";
 
 export interface McRSConfig {
@@ -90,9 +90,62 @@ export class ResourceName {
     public filename(ext:string|null =null){
         return this.path[this.path.length-1]+ext??""
     }
+
+    public toJSON() {
+        return `${this.namespace}:` + this.path.join("/")
+    }
 }
 
 export interface ShaderResource {
     name: string,
     files: ResourceName[]
+}
+
+
+export interface TextureAsset_Texture{
+    /**
+     * Path pointing to the albedo / color map / main texture file (relative to texture asset root)
+     */
+    albedo: string
+
+    /**
+     * Specular maps
+     */
+    specular?: {
+        /**
+         * Path pointing towards the roughness map (relative to texture asset root)
+         */
+        roughness?: string
+        /**
+         * Path pointing towards the metallic map (relative to texture asset root)
+         */
+        metallic?: string
+        /**
+         * Path pointing towards to the porosity map (relative to texture asset root)
+         */
+        porosity?: string
+        /**
+         * Path pointing towards to the emission map (relative to texture asset root)
+         */
+        emission?: string
+    }
+    /**
+     * Normal maps + other maps
+     */
+    normals?:{
+        /**
+         * Path pointing towards to the normal map (relative to texture asset root) <br/>
+         * The normal map follows DirectX's format
+         */
+        normal?: string
+        /**
+         * Path pointing towards to the ambient occlusion map (relative to texture asset root)
+         */
+        ambient_occlusion?: string
+        /**
+         * Path pointing towards to the height map (relative to texture asset root)
+         */
+        height_map?: string
+    }
+
 }
