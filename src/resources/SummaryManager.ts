@@ -1,4 +1,4 @@
-import {Project} from "../project/project";
+import {Project} from "../project";
 import fs from "fs";
 import path from "path";
 import extract from "extract-zip";
@@ -6,6 +6,8 @@ import {DownloadFile, GetVersionTag, ReadJson} from "../tools";
 import {ResourcesDir} from "./vars";
 import {ResourceName} from "../types";
 import jp from "jsonpath"
+
+const mc_namespace = "minecraft:"
 
 class SummaryManager {
     public static readonly branch = "summary"
@@ -67,27 +69,52 @@ class SummaryManager {
         return (await ReadJson(this.resolve("registries", "data.json")))["block"]
     }
 
+
     /**
-     * Returns a list of resources names for specified item's textures
+     * Returns a list of resource names for the block models for a specified block id
      * @param block_id
      */
-    public async get_block_textures(block_id: string): Promise<ResourceName[]> {
-        const mc_namespace = "minecraft:"
+    public async get_block_models(block_id: string): Promise<ResourceName[]> {
         // Read the block definition which will contain a list of block models for the block_id
         let block_definition = (await ReadJson(this.resolve("assets", "block_definition", "data.json")))[block_id]
         let models: string[] = []
-
-        jp.query(block_definition,"$..model").forEach(x => {
+        jp.query(block_definition, "$..model").forEach(x => {
             if (!models.includes(x)) models.push(x)
         })
+        return models.map(x => ResourceName.fromString(x))
+    }
 
+    public async get_block_model_textures(block_model: ResourceName): Promise<Record<string, ResourceName>> {
         let modelData = await ReadJson(this.resolve("assets", "model", "data.json"))
+        let textures: Record<string, ResourceName> = {}
+        let key = block_model.resource_path
+        let model = modelData[key]
+        // Some models no textures so we skip
+        if (!model["textures"]) {
+            return
+        }
 
+        Object.entries(model["textures"]).forEach(([k, v]) => {
+            textures[k] = ResourceName.fromString(v as string)
+        })
+
+        return textures
+    }
+
+
+    /**
+     * Returns a list of resources names for specified block model
+     * @param block_id
+     */
+    public async get_block_textures(block_id: string): Promise<ResourceName[]> {
+
+        // Read the block definition which will contain a list of block models for the block_id
+        let models = await this.get_block_models(block_id)
+        let modelData = await ReadJson(this.resolve("assets", "model", "data.json"))
         let textures: string[] = []
         models.forEach(model_resource => {
-            // The model in the models array still contain the minecraft: namespace.
-            // The keys in the model data json does not. So we remove it
-            let key = model_resource.substring(mc_namespace.length)
+
+            let key = model_resource.resource_path
             let model = modelData[key]
             // Some models no textures so we skip
             if (!model["textures"]) {
@@ -95,12 +122,12 @@ class SummaryManager {
             }
 
             Object.values(model["textures"]).forEach((x: string) => {
-                if (!textures.includes(x)){
+                if (!textures.includes(x)) {
                     textures.push(x)
                 }
             })
         })
-        return textures.map(x=>ResourceName.fromString(x))
+        return textures.map(x => ResourceName.fromString(x))
     }
 
 }

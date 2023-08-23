@@ -1,4 +1,4 @@
-import {Project} from "./project/project";
+import {Project} from "./project";
 import path from "path";
 
 export interface McRSConfig {
@@ -90,6 +90,8 @@ export class ResourceName {
     public filename(ext:string|null =null){
         return this.path[this.path.length-1]+ext??""
     }
+
+    public get resource_path(){return  this.path.join("/")}
 
     public toJSON() {
         return `${this.namespace}:` + this.path.join("/")

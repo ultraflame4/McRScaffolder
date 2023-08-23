@@ -1,4 +1,4 @@
-import {Project} from "../project/project";
+import {Project} from "../project";
 import {ResourceName, ShaderResource} from "../types";
 import {GetVersionTag} from "../tools";
 import {octokit} from "../github";

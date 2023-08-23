@@ -1,7 +1,7 @@
-import {McRSConfig, ResourceName} from "../types";
+import {McRSConfig, ResourceName} from "./types";
 import path from "path";
 import fs from "fs";
-import {GetVersionTag, resolvePathEnvVars} from "../tools";
+import {GetVersionTag, resolvePathEnvVars} from "./tools";
 
 
 

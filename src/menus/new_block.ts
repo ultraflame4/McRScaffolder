@@ -1,10 +1,10 @@
 import ora from "ora";
 import SummaryManager from "../resources/SummaryManager";
-import AssetsManager from "../resources/AssetsDownloader";
+import AssetManager, {BlockAsset} from "../resources/AssetManager";
+import {Project} from "../project";
 import chalk from "chalk";
 import {SearchList} from "../prompts/searchlist";
-import TextureManager, {BlockTextureAsset} from "../project/TextureManager";
-import {Project} from "../project/project";
+import AssetsDownloader from "../resources/AssetsDownloader";
 
 export async function ask_new_block() {
 
@@ -25,17 +25,23 @@ export async function ask_new_block() {
     if (block === null) return;
 
 
-    const blockAsset = TextureManager.addTextureAsset(new BlockTextureAsset(Project, block.id))
-    let textures = await blockAsset.GetResourceNames()
-    if (textures.length < 1) {
-        console.log(chalk.redBright(`Error: ${block} does not have any textures!`))
-        return
+    const blockAsset = AssetManager.addAsset(new BlockAsset(Project, block.id))
+    if (! await blockAsset.LoadConfig()) {
+        await blockAsset.LoadDefaults()
+
+        let textures =  Object.values(blockAsset.GetTextures());
+        if (textures.length < 1) {
+            console.log(chalk.redBright(`Error: ${block} does not have any textures!`))
+            return
+        }
+
+        const spinner2 = ora(`Downloading ${textures.length} block textures...`);
+        spinner2.start()
+        await AssetsDownloader.downloadTextures(...textures)
+        spinner2.succeed()
     }
-    const spinner2 = ora(`Downloading ${textures.length} block textures...`);
-    spinner2.start()
-    await blockAsset.downloadTextures()
-    blockAsset.saveConfig();
-    spinner2.succeed()
+
+
 
 
     //
