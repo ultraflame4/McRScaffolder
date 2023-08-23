@@ -1,10 +1,10 @@
-import {Project} from "../project";
+import {Project} from "../core/project";
 import fs from "fs";
 import path from "path";
 import extract from "extract-zip";
-import {DownloadFile, GetVersionTag, ReadJson} from "../tools";
+import {DownloadFile, GetVersionTag, ReadJson} from "../core/tools";
 import {ResourcesDir} from "./vars";
-import {ResourceName} from "../types";
+import {ResourceName} from "../core/types";
 import jp from "jsonpath"
 
 const mc_namespace = "minecraft:"

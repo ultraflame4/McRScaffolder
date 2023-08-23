@@ -1,7 +1,7 @@
 import ShadersManager from "../resources/ShadersManager";
 import chalk from "chalk";
 import ora from "ora"
-import {ShaderResource} from "../types";
+import {ShaderResource} from "../core/types";
 import AssetsManager from "../resources/AssetsDownloader";
 import {SearchList} from "../prompts/searchlist";
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import pkg from "../package.json";
 import {program} from "commander";
-import {PrintVersion} from "./tools";
+import {PrintVersion} from "./core/tools";
 import path from "path";
 import chalk from "chalk";
 import {start_menu} from "./menus/general_menus";
-import {Project} from "./project";
+import {Project} from "./core/project";
 import {create_project_menu} from "./menus/create_project";
 import watcher from "./watcher";
 

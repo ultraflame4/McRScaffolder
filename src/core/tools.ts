@@ -1,6 +1,6 @@
 import {type VersionSummary} from "./types";
 import chalk from "chalk";
-import pkg from "../package.json";
+import pkg from "../../package.json";
 import * as fs from "fs";
 import path from "path";
 import {DownloaderHelper} from "node-downloader-helper";

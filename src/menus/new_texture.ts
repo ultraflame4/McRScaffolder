@@ -1,7 +1,7 @@
 import ora from "ora";
 import SummaryManager from "../resources/SummaryManager";
 import AssetsManager from "../resources/AssetsDownloader";
-import {ResourceName} from "../types";
+import {ResourceName} from "../core/types";
 import {SearchList} from "../prompts/searchlist";
 
 export async function ask_new_texture() {

@@ -1,6 +1,6 @@
-import {ResourceName} from "../types";
-import {DownloadFile, GetVersionTag} from "../tools";
-import {Project} from "../project";
+import {ResourceName} from "../core/types";
+import {DownloadFile, GetVersionTag} from "../core/tools";
+import {Project} from "../core/project";
 import path from "path";
 
 class AssetsDownloader{

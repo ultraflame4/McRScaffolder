@@ -1,10 +1,10 @@
-import {McRSConfig, PackMcMeta, VersionSummary} from "../types";
-import {GetPackVersions, pathIsDir, resolvePathEnvVars} from "../tools";
+import {McRSConfig, PackMcMeta, VersionSummary} from "../core/types";
+import {GetPackVersions, pathIsDir, resolvePathEnvVars} from "../core/tools";
 import chalk from "chalk";
 import ora from "ora"
 import path from "path";
 import fs from "fs";
-import {Project} from "../project";
+import {Project} from "../core/project";
 import SummaryManager from "../resources/SummaryManager";
 import {input} from "@inquirer/prompts";
 import {SearchList} from "../prompts/searchlist";

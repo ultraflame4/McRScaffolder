@@ -1,9 +1,8 @@
-import {ResourceName} from "../types";
-import {Project_} from "../project";
-import SummaryManager from "./SummaryManager";
+import {ResourceName} from "../core/types";
+import SummaryManager from "../resources/SummaryManager";
+import {Project_} from "../core/project";
 
-
-class BlockModel {
+export class BlockModel {
     model_id: ResourceName
     /**
      * The key is used to identify the texture,
@@ -15,7 +14,6 @@ class BlockModel {
         this.model_id = model_id;
         this.textures = textures;
     }
-
 
     /**
      * Returns the block models for a given block id
@@ -66,17 +64,11 @@ export class BlockAsset {
         return
     }
 
-    public Save() {
-
+    public toJSON(): object {
+        return {
+            block_id: this.block_id,
+            models: this.blockModels
+        }
     }
 
 }
-
-class AssetManager {
-
-    public addAsset<T>(asset: T): T {
-        return asset
-    }
-}
-
-export default new AssetManager()
