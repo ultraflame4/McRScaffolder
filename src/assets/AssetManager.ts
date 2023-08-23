@@ -20,7 +20,7 @@ class AssetRegistry<T> {
     }
 
     public write() {
-        fs.writeFileSync(this.filepath, JSON.stringify(this.items))
+        fs.writeFileSync(this.filepath, JSON.stringify(this.items,null, 3))
     }
 
 }
