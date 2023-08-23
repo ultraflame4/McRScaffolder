@@ -5,6 +5,7 @@ import extract from "extract-zip";
 import {DownloadFile, GetVersionTag, ReadJson} from "../tools";
 import {ResourcesDir} from "./vars";
 import {ResourceName} from "../types";
+import jp from "jsonpath"
 
 class SummaryManager {
     public static readonly branch = "summary"
@@ -75,8 +76,9 @@ class SummaryManager {
         // Read the block definition which will contain a list of block models for the block_id
         let block_definition = (await ReadJson(this.resolve("assets", "block_definition", "data.json")))[block_id]
         let models: string[] = []
-        Object.values(block_definition["variants"]).forEach(x => {
-            if (!models.includes(x["model"])) models.push(x["model"])
+
+        jp.query(block_definition,"$..model").forEach(x => {
+            if (!models.includes(x)) models.push(x)
         })
 
         let modelData = await ReadJson(this.resolve("assets", "model", "data.json"))

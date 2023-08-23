@@ -30,6 +30,7 @@
   "dependencies": {
     "@inquirer/prompts": "^3.0.3",
     "@types/figures": "^3.0.1",
+    "@types/jsonpath": "^0.2.0",
     "@types/node": "18.15.x",
     "@types/node-fetch": "^2.6.3",
     "@types/yauzl": "^2.10.0",
@@ -40,6 +41,7 @@
     "figures": "^5.0.0",
     "fuse.js": "^6.6.2",
     "glob": "^9.3.4",
+    "jsonpath": "^1.1.1",
     "node-downloader-helper": "^2.1.6",
     "octokit": "^2.0.14",
     "ora": "^7.0.1"
