@@ -11,11 +11,11 @@ export interface IMenuConfig {
      */
     options?: IMenuConfig[]
     /**
-     * When defined, this, options will be ignored. Instead, the menu will wait for the Promise set.
+     * When defined, this, options will be ignored. Instead, the menu will call the callback
      *
-     * When the promise returns true, it will go back to the previous menu
+     * When the promise returns true, the callback is called again.
      */
-    custom?: () => Promise<boolean>
+    custom?: () => Promise<boolean | void>
 }
 
 interface IMenuStackItem {
@@ -40,9 +40,9 @@ class MenuManager_ {
 
             const current_menu = menu_history[menu_history.length - 1]
 
-            if (current_menu.config.custom){
+            if (current_menu.config.custom) {
                 let result = await current_menu.config.custom()
-                if (result) {
+                if (!result) {
                     menu_history.pop()
                 }
                 continue
@@ -60,7 +60,7 @@ class MenuManager_ {
                 choices: [
                     ...current_menu.config.options.map((x, index) => {
                         return {
-                            name: x.title??"undefined",
+                            name: x.title ?? "undefined",
                             value: index
                         }
                     }),

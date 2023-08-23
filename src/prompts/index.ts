@@ -12,9 +12,9 @@ async function testCustom():Promise<boolean>{
     })
     if (text.length > 0) {
         console.log("Oi! Are you blind? Try Again! ")
-        return false
+        return true // Return true to repeat
     }
-    return true;
+
 }
 
 const program = await MenuManager.show({
