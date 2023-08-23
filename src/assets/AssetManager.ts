@@ -19,6 +19,11 @@ class AssetRegistry<T> {
         return Project.resolve(`mcrs.${this.registry_name}.assets.json`)
     }
 
+    public load() {
+        let text = fs.readFileSync(this.filepath, {encoding:"utf-8"})
+        this.assets = JSON.parse(text)
+    }
+
     public write() {
         fs.writeFileSync(this.filepath, JSON.stringify(this.assets,null, 3))
     }

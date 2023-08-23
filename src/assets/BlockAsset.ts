@@ -32,17 +32,21 @@ export class BlockModel {
 
 export class BlockAsset {
 
-    private block_id: string
+
+    private _block_id: string
     private project: Project_;
     private blockModels: BlockModel[] = []
 
     public constructor(project: Project_, block_id: string) {
         this.project = project;
-        this.block_id = block_id;
+        this._block_id = block_id;
     }
 
+    get block_id(): string {
+        return this._block_id;
+    }
     public async GetDefaultModels() {
-        return BlockModel.FromBlockId(this.block_id);
+        return BlockModel.FromBlockId(this._block_id);
     }
 
     /**
@@ -66,7 +70,7 @@ export class BlockAsset {
 
     public toJSON(): object {
         return {
-            block_id: this.block_id,
+            block_id: this._block_id,
             models: this.blockModels
         }
     }

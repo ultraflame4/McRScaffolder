@@ -6,10 +6,11 @@ import {ask_new_block} from "./new_block";
 import {ask_new_texture} from "./new_texture";
 import {ask_new_shader} from "./new_shader";
 import {select} from "@inquirer/prompts";
+import {menu_assets} from "./edit_menu";
 
 
 
-async function settings_menu() {
+async function menu_settings() {
     const answer = (await select({
         message: "Settings",
         choices: [
@@ -34,10 +35,10 @@ async function settings_menu() {
 
 }
 
-async function add_menu() {
+async function menu_add() {
     const answer = await select(
         {
-            message: "Main Menu",
+            message: "Main Menu - New Asset",
             choices: [
                 {name: "Add Item", value: "new_item"},
                 {name: "Add Block", value: "new_block"},
@@ -73,7 +74,8 @@ export async function start_menu() {
             {
                 message: "Main Menu",
                 choices: [
-                    {name: "Add", value: "add"},
+                    {name: "New Asset", value: "add"},
+                    {name: "Existing Assets", value: "edit"},
                     {name: "Watch & Sync", value: "watch"},
                     {name: "Settings", value: "settings"},
                     {name: "Exit (Ctrl+C)", value: "exit"},
@@ -83,7 +85,10 @@ export async function start_menu() {
 
         switch (answers) {
             case "add":
-                await add_menu()
+                await menu_add()
+                break;
+            case "edit":
+                await menu_assets()
                 break;
             case "watch":
                 console.log(chalk.cyan.bold("i"),
@@ -91,7 +96,7 @@ export async function start_menu() {
                     chalk.yellow("mcrs watch"),"in another terminal session!")
                 break;
             case "settings":
-                await settings_menu()
+                await menu_settings()
                 break;
             case "exit":
                 run = false
