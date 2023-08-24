@@ -5,11 +5,11 @@ export interface IMenuConfig {
     /**
      * The title of the menu. Defaults to undefined
      */
-    title?: string,
+    title: string,
     /**
-     * Various submenus
+     * Various submenus.
      */
-    options?: IMenuConfig[]
+    options?: IMenuConfig[] | ( () => Promise<IMenuConfig[]>)
     /**
      * When defined, this, options will be ignored. Instead, the menu will call the callback
      *
@@ -51,14 +51,20 @@ class MenuManager_ {
 
             const isRoot = menu_history.length == 1
             const history_text = menu_history.map(x => x.config.title).join(" > ")
+            let current_menu_options: IMenuConfig[] = []
 
-            if (!current_menu.config.options) current_menu.config.options = []
+            if (current_menu.config.options instanceof Function){
+                current_menu_options = await current_menu.config.options()
+            }
+            else if (Array.isArray(current_menu.config.options)){
+                current_menu_options = current_menu.config.options
+            }
 
 
             const nextMenu = await select({
                 message: history_text,
                 choices: [
-                    ...current_menu.config.options.map((x, index) => {
+                    ...current_menu_options.map((x, index) => {
                         return {
                             name: x.title ?? "undefined",
                             value: index
@@ -72,7 +78,7 @@ class MenuManager_ {
 
             if (nextMenu > -1) {
                 menu_history.push({
-                    config: current_menu.config.options[nextMenu],
+                    config: current_menu_options[nextMenu],
                     option_index: nextMenu
                 })
                 continue

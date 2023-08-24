@@ -5,10 +5,11 @@ import {ask_new_item} from "./new_item";
 import {ask_new_block} from "./new_block";
 import {ask_new_texture} from "./new_texture";
 import {ask_new_shader} from "./new_shader";
-import {select} from "@inquirer/prompts";
-import {menu_assets} from "./edit_menu";
+
+import { menu_blocks_list} from "./edit_menu";
 import {IMenuConfig} from "../prompts/menu";
 import figureSet from "figures";
+
 
 //
 // async function menu_add() {
@@ -46,16 +47,19 @@ import figureSet from "figures";
 export const menu_new_asset: IMenuConfig = {
     title: "New Asset",
     options: [
-        {title: "Add Item"},
-        {title: "Add Block"},
-        {title: "Add Texture"},
-        {title: "Add Shader"},
+        {title: "Add Item", custom: ask_new_item},
+        {title: "Add Block", custom: ask_new_block},
+        {title: "Add Texture", custom: ask_new_texture},
+        {title: "Add Shader", custom: ask_new_shader},
     ]
 }
 
 export const menu_existing_asset: IMenuConfig = {
     title: "Existing Asset",
-
+    options: [
+        {title:"Items"},
+        {title:"Blocks", custom: menu_blocks_list}
+    ]
 }
 
 export const menu_watch: IMenuConfig = {
