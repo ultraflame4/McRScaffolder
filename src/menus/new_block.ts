@@ -1,8 +1,11 @@
-import inquirer, {Answers, QuestionCollection} from "inquirer";
 import ora from "ora";
 import SummaryManager from "../resources/SummaryManager";
-import AssetsManager from "../resources/AssetsManager";
+import AssetManager from "../assets/AssetManager";
+import {Project} from "../core/project";
 import chalk from "chalk";
+import {SearchList} from "../prompts/searchlist";
+import AssetsDownloader from "../resources/AssetsDownloader";
+import {BlockAsset} from "../assets/BlockAsset";
 
 export async function ask_new_block() {
 
@@ -11,25 +14,35 @@ export async function ask_new_block() {
     const item_list = await SummaryManager.read_blocks();
     spinner.succeed()
 
-    const block = (await inquirer.prompt(
+    const block = (await SearchList(
         {
-            name:"block_id",
             message: "Select block",
-            //@ts-ignore
-            type: "search-list",
-            choices:item_list
+            choices: item_list.map(x => {
+                return {id: x, text: x}
+            }),
+            allowCancel: true
         }
-    ))["block_id"]
+    ))
+    if (block === null) return;
 
-    let textures = await SummaryManager.get_block_textures(block)
-    if (textures.length < 1) {
-        console.log(chalk.redBright(`Error: ${block} does not have any textures!`))
-        return
+
+    const blockAsset = AssetManager.blocks.add(new BlockAsset(Project, block.id))
+    if (! await blockAsset.LoadConfig()) {
+        await blockAsset.LoadDefaults()
+
+        let textures =  Object.values(blockAsset.GetTextures());
+        if (textures.length < 1) {
+            console.log(chalk.redBright(`Error: ${block} does not have any textures!`))
+            return
+        }
+
+        const spinner2 = ora(`Downloading ${textures.length} block textures...`);
+        spinner2.start()
+        await AssetsDownloader.downloadTextures(...textures)
+        spinner2.succeed()
     }
-    const spinner2 = ora(`Downloading ${textures.length} block textures...`);
-    spinner2.start()
-    await AssetsManager.downloadTextures(...textures)
-    spinner2.succeed()
+
+    AssetManager.blocks.write()
 
     return
 }

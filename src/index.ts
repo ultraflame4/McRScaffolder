@@ -1,19 +1,14 @@
 #!/usr/bin/env node
 import pkg from "../package.json";
 import {program} from "commander";
-import {PrintVersion} from "./tools";
+import {PrintVersion} from "./core/tools";
 import path from "path";
 import chalk from "chalk";
-import {start_menu} from "./menus/general_menus";
-import {Project} from "./project";
+import {Project} from "./core/project";
 import {create_project_menu} from "./menus/create_project";
-import inquirer from "inquirer";
-import inquirer_search_list from "inquirer-search-list"
-
 import watcher from "./watcher";
-
-inquirer.registerPrompt('search-list', inquirer_search_list);
-
+import {MenuManager} from "./prompts/menu";
+import {menu_start} from "./menus/general_menus";
 
 PrintVersion()
 program.description(pkg.description)
@@ -33,7 +28,7 @@ program.command("open")
             await create_project_menu(project_path)
         }
         console.log(chalk.whiteBright("Opening project at"), chalk.greenBright(project_path))
-        await start_menu()
+        await MenuManager.show(menu_start)
     })
 
 

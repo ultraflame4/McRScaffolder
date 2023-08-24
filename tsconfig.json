@@ -7,7 +7,7 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "types": [
-      "noed"
+      "node"
     ]
   },
 

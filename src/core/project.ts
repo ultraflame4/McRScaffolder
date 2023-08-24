@@ -1,15 +1,19 @@
-import {McRSConfig} from "./types";
+import {McRSConfig, ResourceName} from "./types";
 import path from "path";
 import fs from "fs";
 import {GetVersionTag, resolvePathEnvVars} from "./tools";
 
 
-class Project_ {
+
+export class Project_ {
 
     /// Project Root
     #project_root: string | null
 
-
+    /**
+     * Returns the version tag for this project with the specific branch name
+     * @param branch_name
+     */
     public version_tag(branch_name:string):string {
         return GetVersionTag(this.config.version_id,branch_name)
     }
@@ -60,24 +64,19 @@ class Project_ {
 
 
     /**
-     * Attempts to initialise the Project
+     * Attempts to initialise the Project with a specific config
      * @param project_root The path for the root of the project
      * @param new_config Optional; The config for the project. When undefined, attempts to load the config with this.loadConfig()
      * @return {boolean} Returns true if config is successfully set or loaded.
      */
     public Initialise(project_root: string, new_config?: McRSConfig): boolean {
         this.#project_root = project_root
-
-        // process.chdir(this.project_root) // Very important, so that all paths resolves to the project root
-
         if (new_config) {
             this.#config = new_config
             this.saveConfig()
             return true
         }
-
         return this.loadConfig()
-
     }
 
     public get mcResourcePackPath() {

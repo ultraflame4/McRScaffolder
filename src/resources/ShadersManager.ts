@@ -1,6 +1,6 @@
-import {Project} from "../project";
-import {ResourceName, ShaderResource} from "../types";
-import {GetVersionTag} from "../tools";
+import {Project} from "../core/project";
+import {ResourceName, ShaderResource} from "../core/types";
+import {GetVersionTag} from "../core/tools";
 import {octokit} from "../github";
 
 class ShadersManager {

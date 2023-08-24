@@ -1,11 +1,12 @@
 {
   "name": "mcrscaffolder",
-  "version": "0.0.7",
+  "version": "0.1.0-alpha",
   "description": "",
   "main": "bin/index.js",
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts open ./test",
+    "test-prompt": "tsx src/prompts/index.ts",
     "start-watch": "tsx src/index.ts watch ./test",
     "build": "tsx config.ts"
   },
@@ -28,7 +29,9 @@
     "mcrs": "bin/index.js"
   },
   "dependencies": {
-    "@types/inquirer": "^9.0.3",
+    "@inquirer/prompts": "^3.0.3",
+    "@types/figures": "^3.0.1",
+    "@types/jsonpath": "^0.2.0",
     "@types/node": "18.15.x",
     "@types/node-fetch": "^2.6.3",
     "@types/yauzl": "^2.10.0",
@@ -36,10 +39,12 @@
     "chokidar": "^3.5.3",
     "commander": "^10.0.0",
     "extract-zip": "^2.0.1",
+    "figures": "^5.0.0",
+    "fuse.js": "^6.6.2",
     "glob": "^9.3.4",
-    "inquirer": "^9.1.5",
-    "inquirer-search-list": "^1.2.6",
+    "jsonpath": "^1.1.1",
     "node-downloader-helper": "^2.1.6",
-    "octokit": "^2.0.14"
+    "octokit": "^2.0.14",
+    "ora": "^7.0.1"
   }
 }

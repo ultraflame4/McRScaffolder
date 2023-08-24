@@ -1,4 +1,4 @@
-import {Project} from "./project";
+import {Project} from "./core/project";
 import chokidar from "chokidar"
 import ora from "ora"
 import chalk from "chalk";
@@ -7,7 +7,7 @@ import path from "path";
 import * as readline from "readline";
 import {program} from "commander";
 import fs from "fs";
-import {pathIsDir} from "./tools";
+import {pathIsDir} from "./core/tools";
 
 
 
