@@ -1,13 +1,49 @@
 import {Project} from "../core/project";
-import fs from "fs";
+import fs, {Mode} from "fs";
 import path from "path";
 import extract from "extract-zip";
 import {DownloadFile, GetVersionTag, ReadJson} from "../core/tools";
 import {ResourcesDir} from "./vars";
 import {ResourceName} from "../core/types";
-import jp from "jsonpath"
+import jp, {parent} from "jsonpath"
 
 const mc_namespace = "minecraft:"
+
+
+export class ModelDataHelper {
+    public readonly model_id: ResourceName
+    public readonly parent: ResourceName
+    public readonly textures: Record<string, ResourceName>
+
+    constructor(model_id: ResourceName, parent: ResourceName, textures: Record<string, ResourceName>) {
+        this.model_id = model_id;
+        this.parent = parent;
+        this.textures = textures;
+    }
+
+    /**
+     * Creates a helper to read model data from the json file
+     * @param summary The summary manager instance
+     * @param model_id The model id eg. "item/coal"
+     * @return null if model does not exist
+     */
+    public static async FromRead(summary: SummaryManager, model_id: string): Promise<ModelDataHelper | null> {
+        let all_models = await ReadJson(summary.resolve("assets", "model", "data.json"))
+        let data = all_models[model_id]
+        if (!data) return null
+        let textures = data["textures"] ?? {}
+        Object.keys(textures).forEach(k => {
+            textures[k] = ResourceName.fromString(textures[k] as string)
+        })
+
+        return new ModelDataHelper(
+            ResourceName.fromString(model_id),
+            data["parent"],
+            textures
+       )
+    }
+
+}
 
 class SummaryManager {
     public static readonly branch = "summary"
@@ -38,6 +74,10 @@ class SummaryManager {
         await extract(dl_path, {dir: path.resolve(dir_path, SummaryManager.branch)})
     }
 
+    public async get_item_model(item_id: string) {
+        return await ModelDataHelper.FromRead(this,`item/${item_id}`)
+    }
+
 
     /**
      * Gets a list of all minecraft textures from the registry
@@ -51,15 +91,6 @@ class SummaryManager {
      */
     public async read_items(): Promise<string[]> {
         return (await ReadJson(this.resolve("registries", "data.json")))["item"]
-    }
-
-    /**
-     * Returns a list of resources names for specified item's textures
-     * @param item_id
-     */
-    public async get_item_textures(item_id: string): Promise<ResourceName[]> {
-        let model = (await ReadJson(this.resolve("assets", "model", "data.json")))[`item/${item_id}`]
-        return Object.values(model["textures"]).map((x: string) => ResourceName.fromString(x))
     }
 
     /**
@@ -84,7 +115,7 @@ class SummaryManager {
         return models.map(x => ResourceName.fromString(x))
     }
 
-    public async get_block_model_textures(block_model: ResourceName): Promise<Record<string, ResourceName>> {
+    public async get_block_textures(block_model: ResourceName): Promise<Record<string, ResourceName>> {
         let modelData = await ReadJson(this.resolve("assets", "model", "data.json"))
         let textures: Record<string, ResourceName> = {}
         let key = block_model.resource_path
@@ -99,35 +130,6 @@ class SummaryManager {
         })
 
         return textures
-    }
-
-
-    /**
-     * Returns a list of resources names for specified block model
-     * @param block_id
-     */
-    public async get_block_textures(block_id: string): Promise<ResourceName[]> {
-
-        // Read the block definition which will contain a list of block models for the block_id
-        let models = await this.get_block_models(block_id)
-        let modelData = await ReadJson(this.resolve("assets", "model", "data.json"))
-        let textures: string[] = []
-        models.forEach(model_resource => {
-
-            let key = model_resource.resource_path
-            let model = modelData[key]
-            // Some models no textures so we skip
-            if (!model["textures"]) {
-                return
-            }
-
-            Object.values(model["textures"]).forEach((x: string) => {
-                if (!textures.includes(x)) {
-                    textures.push(x)
-                }
-            })
-        })
-        return textures.map(x => ResourceName.fromString(x))
     }
 
 }
