@@ -129,6 +129,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
             setCursorPos(newCursorPos)
         } else {
             setQuery(rl.line)
+            setCursorPos(0)
         }
     });
 
