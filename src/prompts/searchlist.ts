@@ -94,7 +94,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
     const searchResults = fuzzySearch(query, config.choices)
     const isCommand = query.charAt(0) == ":"
     const filteredChoices = isCommand ? [] : searchResults
-    if (config.allowCancel) {
+    if (config.allowCancel && (isCommand || query.length==0)) {
         filteredChoices.push({text: "Quit / Exit", id: cancelChoiceId})
     }
 
