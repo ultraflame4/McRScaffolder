@@ -1,49 +1,12 @@
 import {Project} from "../core/project";
-import fs, {Mode} from "fs";
+import fs from "fs";
 import path from "path";
 import extract from "extract-zip";
 import {DownloadFile, GetVersionTag, ReadJson} from "../core/tools";
 import {ResourcesDir} from "./vars";
-import {ResourceName} from "../core/types";
-import jp, {parent} from "jsonpath"
+import {AssetModel, ResourceName} from "../core/types";
+import jp from "jsonpath"
 
-const mc_namespace = "minecraft:"
-
-
-export class ModelDataHelper {
-    public readonly model_id: ResourceName
-    public readonly parent: ResourceName
-    public readonly textures: Record<string, ResourceName>
-
-    constructor(model_id: ResourceName, parent: ResourceName, textures: Record<string, ResourceName>) {
-        this.model_id = model_id;
-        this.parent = parent;
-        this.textures = textures;
-    }
-
-    /**
-     * Creates a helper to read model data from the json file
-     * @param summary The summary manager instance
-     * @param model_id The model id eg. "item/coal"
-     * @return null if model does not exist
-     */
-    public static async FromRead(summary: SummaryManager, model_id: string): Promise<ModelDataHelper | null> {
-        let all_models = await ReadJson(summary.resolve("assets", "model", "data.json"))
-        let data = all_models[model_id]
-        if (!data) return null
-        let textures = data["textures"] ?? {}
-        Object.keys(textures).forEach(k => {
-            textures[k] = ResourceName.fromString(textures[k] as string)
-        })
-
-        return new ModelDataHelper(
-            ResourceName.fromString(model_id),
-            data["parent"],
-            textures
-       )
-    }
-
-}
 
 class SummaryManager {
     public static readonly branch = "summary"
@@ -74,8 +37,35 @@ class SummaryManager {
         await extract(dl_path, {dir: path.resolve(dir_path, SummaryManager.branch)})
     }
 
+    /**
+     * Creates a helper to read model data from the json file
+     * @param summary The summary manager instance
+     * @param model_id The model id eg. "item/coal"
+     * @return null if model does not exist
+     */
+
+    private async _read_model(model_id_str: string) {
+        let all_models = await ReadJson(this.resolve("assets", "model", "data.json"))
+        let data = all_models[model_id_str]
+        if (!data) return null
+        let textures = data["textures"] ?? {}
+        Object.keys(textures).forEach(k => {
+            textures[k] = ResourceName.fromString(textures[k] as string)
+        })
+
+        return new AssetModel(
+            ResourceName.fromString(model_id_str),
+            data["parent"],
+            textures
+        )
+    }
+
+    public async read_model(model_id: ResourceName) {
+        return await this._read_model(model_id.resource_path)
+    }
+
     public async get_item_model(item_id: string) {
-        return await ModelDataHelper.FromRead(this,`item/${item_id}`)
+        return await this._read_model(`item/${item_id}`)
     }
 
 

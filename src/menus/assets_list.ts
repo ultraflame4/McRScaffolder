@@ -1,4 +1,4 @@
-import AssetManager from "../assets/AssetManager";
+import AssetManager from "../assets";
 import {SearchList} from "../prompts/searchlist";
 
 

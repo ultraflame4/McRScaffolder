@@ -151,3 +151,15 @@ export interface TextureAsset_Texture{
     }
 
 }
+
+export class AssetModel {
+    public readonly model_id: ResourceName
+    public readonly parent: ResourceName
+    public readonly textures: Record<string, ResourceName>
+
+    constructor(model_id: ResourceName, parent: ResourceName, textures: Record<string, ResourceName>) {
+        this.model_id = model_id;
+        this.parent = parent;
+        this.textures = textures;
+    }
+}
