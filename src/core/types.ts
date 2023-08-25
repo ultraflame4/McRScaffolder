@@ -152,14 +152,22 @@ export interface TextureAsset_Texture{
 
 }
 
+
 export class AssetModel {
-    public readonly model_id: ResourceName
-    public readonly parent: ResourceName
-    public readonly textures: Record<string, ResourceName>
+    model_id: ResourceName
+    parent: ResourceName
+    textures: Record<string, ResourceName>
 
     constructor(model_id: ResourceName, parent: ResourceName, textures: Record<string, ResourceName>) {
         this.model_id = model_id;
         this.parent = parent;
         this.textures = textures;
+    }
+
+    static fromJson(model_id:ResourceName, jsonData:any): null | AssetModel{
+        if (typeof jsonData.parent != "string") return null
+        if (typeof jsonData.textures != "object") return null
+        if (Object.values(jsonData.textures).some(x=> typeof x != "string")) return  null
+        return  new AssetModel(model_id,jsonData.p)
     }
 }
