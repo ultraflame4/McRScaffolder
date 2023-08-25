@@ -6,7 +6,7 @@ import {ask_new_block} from "./new_block";
 import {ask_new_texture} from "./new_texture";
 import {ask_new_shader} from "./new_shader";
 
-import { menu_blocks_list} from "./edit_menu";
+import { menu_blocks_list} from "./assets_list";
 import {IMenuConfig} from "../prompts/menu";
 import figureSet from "figures";
 
