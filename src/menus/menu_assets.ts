@@ -8,7 +8,7 @@ import chalk from "chalk";
 export async function menu_items() {
 
     let items_ = await ProjectAssetsManager.get_items()
-    console.log(items_)
+
     const selected_item = await SearchList({
         message: "Item Assets",
         allowCancel: true,
