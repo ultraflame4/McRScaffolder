@@ -3,9 +3,10 @@ import {ISearchListChoice, SearchList} from "../prompts/searchlist";
 import {ProjectAsset, ProjectAssetsManager} from "../resources/ProjectAssetsManager";
 import figureSet from "figures";
 import chalk from "chalk";
-import {ITextureAsset} from "../resources/common"
-import {select, Separator} from "@inquirer/prompts";
+import {ITextureAsset, ResourcePackTexture} from "../resources/common"
+import {input, select, Separator} from "@inquirer/prompts";
 import _ from "lodash"
+import {ResourceName} from "../core/types";
 export type ProjectTexturedAsset = ProjectAsset<ITextureAsset>
 
 enum AddTextureAssetConfigOption {
@@ -17,26 +18,30 @@ export async function modify_texture_config(asset: ProjectTexturedAsset) {
     let textures = await asset.asset.GetTextures()
     let grouped = _.groupBy(textures,x=>x.model_id)
 
-    let choices: (ISearchListChoice | Separator)[] = []
-    Object.entries(grouped).forEach(([k,v])=>{
-        choices.push(new Separator(`-----Model: ${k}-----`))
-        v.forEach(x=>{
-            choices.push({
-                id: x.name,
-                data: x
+    while (true){
+
+        let choices: (ISearchListChoice | Separator)[] = []
+        Object.entries(grouped).forEach(([k,v])=>{
+            choices.push(new Separator(`-----Model: ${k}-----`))
+            v.forEach(x=>{
+                choices.push({
+                    id: x.name,
+                    text: `${x.name}: "${x.path.toString()}"`,
+                    data: x
+                })
             })
         })
-    })
 
-    let run = true
-    while (run){
         let ans = await SearchList({
             message: `Configuring Asset ${asset.asset.asset_id.toString()} textures`,
             allowCancel: true,
             choices
         })
+        if (ans === null) break
+        let data = ans.data as ResourcePackTexture
 
-        if (ans === null) run = false
+        let tex_path = await input({message:`Texture "${data.name}" resource path`, default:data.path.toString()})
+        data.path = ResourceName.fromString(tex_path)
     }
 }
 

@@ -1,7 +1,7 @@
 import {ResourceName} from "../core/types";
 import SummaryManager from "./SummaryManager";
 
-interface ResourcePackTexture {
+export interface ResourcePackTexture {
     /**
      * The model this texture belongs to (Used for grouping)
      */
