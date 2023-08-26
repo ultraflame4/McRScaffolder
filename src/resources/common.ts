@@ -99,13 +99,14 @@ class ResourcePackModel {
         if (this._loaded && !force) return
         let data = await SummaryManager.read_model(this.model_id);
         this._parent_model_id = ResourceName.fromString(data["parent"] as string) ?? null
-        this._textures = Object.entries(data["_textures"] ?? {}).map(([k, v]) => {
+        this._textures = Object.entries(data["textures"] ?? {}).map(([k, v]) => {
             return {
                 model_id: this.model_id,
                 name: k,
                 path: ResourceName.fromString(v as string)
             }
         })
+        console.log("LOADING",)
         this._loaded = true
     }
 
