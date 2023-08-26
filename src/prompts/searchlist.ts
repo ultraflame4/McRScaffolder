@@ -137,7 +137,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
 
     const allChoices = filteredChoices.map((choice, index) => {
         if (Separator.isSeparator(choice)) {
-            return ` ${choice.separator}`;
+            return `${choice.separator.toString()}`;
         }
 
         const lineDesc = choice.description??choice.id
