@@ -3,7 +3,7 @@ import SummaryManager from "./SummaryManager";
 
 type ResourcePackTexture = { name: string, path: ResourceName }
 
-interface ITextureAsset {
+export interface ITextureAsset {
     GetTextures(): Promise<ResourcePackTexture[]>
 }
 

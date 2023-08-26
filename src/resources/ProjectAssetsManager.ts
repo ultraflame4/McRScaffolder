@@ -1,7 +1,7 @@
 import {ResourcePackItemAsset} from "./common";
 import SummaryManager from "./SummaryManager";
 
-interface ProjectAsset<A> {
+export interface ProjectAsset<A> {
     added: boolean
     asset: A
 }
