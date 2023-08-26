@@ -1,4 +1,4 @@
-import {select} from "@inquirer/prompts";
+import {select, Separator} from "@inquirer/prompts";
 
 
 export interface IMenuConfig {
