@@ -11,11 +11,18 @@ export async function menu_items() {
     console.log(items_)
     const selected_item = await SearchList({
         message: "Item Assets",
-        choices: items_.map(x=>{
-            return{
+        allowCancel: true,
+        choices: items_.map(x => {
+            return {
                 id: x.asset.item_id.toString(),
-                text: `[${x.added?figureSet.tick : figureSet.arrowDown}] ${x.asset.item_id}`,
-                description: chalk.bold.yellow(figureSet.questionMarkPrefix + "Missing Item. ") + `Add ${x.asset.item_id.toString()} to the project`
+                text: `[${x.added ? figureSet.tick : figureSet.arrowDown}] ${x.asset.item_id}`,
+                // description: chalk.yellow("? Missing Item. ") + `Add ${x.asset.item_id.toString()} to the project`
+                description:
+                    chalk.yellow("? Missing Asset. ") +
+                    chalk.greenBright.italic(`Select`) +
+                    chalk.dim.italic(` to `) +
+                    chalk.whiteBright.italic(`Download & Add`) +
+                    chalk.dim.italic(` to project`)
             }
         })
     })

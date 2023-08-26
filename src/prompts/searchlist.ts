@@ -140,10 +140,10 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
             return ` ${choice.separator}`;
         }
 
-        const lineDesc = chalk.italic(` ${choice.description??choice.id}`)
+        const lineDesc = choice.description??choice.id
         const lineTxt = choice.text ?? choice.id
         if (index == cursorPosition) {
-            return chalk.cyanBright(figureSet.pointer) + " " + chalk.greenBright(chalk.bold(lineTxt)) + chalk.dim(lineDesc)
+            return chalk.cyanBright(figureSet.pointer) + " " + chalk.bold(lineTxt) + " " + lineDesc
         }
         return chalk.dim(`${figureSet.dot} ${lineTxt}`);
     }).join("\n")
