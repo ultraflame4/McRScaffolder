@@ -4,7 +4,7 @@ import SummaryManager from "./SummaryManager";
 type ResourcePackTexture = { name: string, path: ResourceName }
 
 interface ITextureAsset {
-    GetTextures(): ResourcePackTexture[]
+    GetTextures(): Promise<ResourcePackTexture[]>
 }
 
 export class ResourcePackItemAsset implements ITextureAsset {
@@ -16,7 +16,8 @@ export class ResourcePackItemAsset implements ITextureAsset {
         this.model = model;
     }
 
-    GetTextures(): ResourcePackTexture[] {
+    async GetTextures(): Promise<ResourcePackTexture[]> {
+        await this.model.loadData()
         return this.model.textures;
     }
 
@@ -39,7 +40,7 @@ export class ResourcePackBlockAsset implements ITextureAsset {
         this.models = models;
     }
 
-    GetTextures(): ResourcePackTexture[] {
+    async GetTextures(): Promise<ResourcePackTexture[]> {
         return this.models.flatMap(x => x.textures);
     }
 }
@@ -96,7 +97,7 @@ class ResourcePackModel {
      * @param force_load When true, immediate loads the data instead of depending on user to load it.
      */
 
-    static async fromModelId(model_id: ResourceName, force_load:boolean=false): Promise<ResourcePackModel> {
+    static async fromModelId(model_id: ResourceName, force_load: boolean = false): Promise<ResourcePackModel> {
         let data = await SummaryManager.read_model(model_id);
         let o = new ResourcePackModel(
             model_id,
