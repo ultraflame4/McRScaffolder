@@ -1,15 +1,58 @@
-import {IMenuConfig} from "../prompts/menu";
-import {SearchList} from "../prompts/searchlist";
+import {IMenuConfig, MenuManager} from "../prompts/menu";
+import {ISearchListChoice, SearchList} from "../prompts/searchlist";
 import {ProjectAsset, ProjectAssetsManager} from "../resources/ProjectAssetsManager";
 import figureSet from "figures";
 import chalk from "chalk";
 import {ITextureAsset} from "../resources/common"
-
+import {select, Separator} from "@inquirer/prompts";
+import _ from "lodash"
 export type ProjectTexturedAsset = ProjectAsset<ITextureAsset>
 
-export async function add_texture_asset(asset: ProjectTexturedAsset) {
+enum AddTextureAssetConfigOption {
+    _default = "default",
+    _custom = "custom"
+}
+
+export async function modify_texture_config(asset: ProjectTexturedAsset) {
     let textures = await asset.asset.GetTextures()
-    // const
+    let grouped = _.groupBy(textures,x=>x.model_id)
+
+    let choices: (ISearchListChoice | Separator)[] = []
+    Object.entries(grouped).forEach(([k,v])=>{
+        choices.push(new Separator(k))
+        v.forEach(x=>{
+            choices.push({
+                id: x.name,
+                data: x
+            })
+        })
+    })
+
+    let run = true
+    while (run){
+        let ans = await SearchList({
+            message: `Configuring Asset ${asset.asset.asset_id.toString()} textures`,
+            allowCancel: true,
+            choices
+        })
+
+        if (ans === null) run = false
+    }
+}
+
+export async function add_texture_asset(asset: ProjectTexturedAsset) {
+
+    let option = await select<AddTextureAssetConfigOption>({
+        message: "Add Texture Asset Config",
+        choices: [
+            {name: "Use Defaults", value: AddTextureAssetConfigOption._default},
+            {name: "Custom", value: AddTextureAssetConfigOption._custom}
+        ]
+    })
+
+    if (option == AddTextureAssetConfigOption._custom) {
+        await modify_texture_config(asset)
+    }
 }
 
 export async function menu_items() {
@@ -21,8 +64,8 @@ export async function menu_items() {
         allowCancel: true,
         choices: items_.map(x => {
             return {
-                id: x.asset.item_id.toString(),
-                text: `[${x.added ? figureSet.tick : figureSet.arrowDown}] ${x.asset.item_id}`,
+                id: x.asset.asset_id.toString(),
+                text: `[${x.added ? figureSet.tick : figureSet.arrowDown}] ${x.asset.asset_id}`,
                 // description: chalk.yellow("? Missing Item. ") + `Add ${x.asset.item_id.toString()} to the project`
                 description:
                     chalk.yellow("? Missing Asset. ") +
@@ -37,10 +80,9 @@ export async function menu_items() {
 
     const selected_item = ans.data as ProjectTexturedAsset
 
-    if (!selected_item.added){
+    if (!selected_item.added) {
         await add_texture_asset(selected_item)
-    }
-    else {
+    } else {
 
     }
 }

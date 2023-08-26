@@ -16,16 +16,20 @@ interface ResourcePackTexture {
     path: ResourceName
 }
 
-export interface ITextureAsset {
+export interface IResourcePackAsset{
+    asset_id: ResourceName
+}
+
+export interface ITextureAsset extends IResourcePackAsset{
     GetTextures(): Promise<ResourcePackTexture[]>
 }
 
 export class ResourcePackItemAsset implements ITextureAsset {
-    item_id: ResourceName
+    asset_id: ResourceName
     model: ResourcePackModel
 
     constructor(item_id: ResourceName, model: ResourcePackModel) {
-        this.item_id = item_id;
+        this.asset_id = item_id;
         this.model = model;
     }
 
@@ -45,11 +49,11 @@ export class ResourcePackItemAsset implements ITextureAsset {
 }
 
 export class ResourcePackBlockAsset implements ITextureAsset {
-    block_id: ResourceName
+    asset_id: ResourceName
     models: ResourcePackModel[]
 
     constructor(block_id: ResourceName, models: ResourcePackModel[]) {
-        this.block_id = block_id;
+        this.asset_id = block_id;
         this.models = models;
     }
 
@@ -112,7 +116,6 @@ class ResourcePackModel {
      */
 
     static async fromModelId(model_id: ResourceName, force_load: boolean = false): Promise<ResourcePackModel> {
-        let data = await SummaryManager.read_model(model_id);
         let o = new ResourcePackModel(
             model_id,
             null,
