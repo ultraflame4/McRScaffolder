@@ -1,7 +1,20 @@
 import {ResourceName} from "../core/types";
 import SummaryManager from "./SummaryManager";
 
-type ResourcePackTexture = { name: string, path: ResourceName }
+interface ResourcePackTexture {
+    /**
+     * The model this texture belongs to (Used for grouping)
+     */
+    model_id: ResourceName
+    /**
+     * The name of the texture (Cannot be changed)
+     */
+    name: string,
+    /**
+     * The actual textureresource path
+     */
+    path: ResourceName
+}
 
 export interface ITextureAsset {
     GetTextures(): Promise<ResourcePackTexture[]>
@@ -84,6 +97,7 @@ class ResourcePackModel {
         this._parent_model_id = ResourceName.fromString(data["parent"] as string) ?? null
         this._textures = Object.entries(data["_textures"] ?? {}).map(([k, v]) => {
             return {
+                model_id: this.model_id,
                 name: k,
                 path: ResourceName.fromString(v as string)
             }
