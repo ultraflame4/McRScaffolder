@@ -19,7 +19,7 @@ export async function modify_texture_config(asset: ProjectTexturedAsset) {
 
     let choices: (ISearchListChoice | Separator)[] = []
     Object.entries(grouped).forEach(([k,v])=>{
-        choices.push(new Separator(k))
+        choices.push(new Separator(`-----Model: ${k}-----`))
         v.forEach(x=>{
             choices.push({
                 id: x.name,
