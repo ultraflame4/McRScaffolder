@@ -10,11 +10,9 @@ interface ProjectAsset<A> {
 class AssetManager_{
 
     public async get_items(): Promise<ProjectAsset<ResourcePackItemAsset>[]> {
-        let raw_itemlist = await SummaryManager.get_items()
-
         let all_items: ProjectAsset<ResourcePackItemAsset>[] =
             await Promise.all(
-                raw_itemlist.map( async  x=>  {
+                (await SummaryManager.get_items()).map( async  x=>  {
                     return {added: false, asset: await ResourcePackItemAsset.fromItemId(x)}
                 })
             )
