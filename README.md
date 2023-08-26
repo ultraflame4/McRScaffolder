@@ -1,8 +1,3 @@
-# [Abandoned] Minecraft Resourcepack Scaffolder
-There are too many issues with how the project is structure. As such I have decided to no longer maintain or work on this project. The latest commits are non-working, meaning that they will not build or run.
-
-The latest release should still work, at your own risks.
-
 # Minecraft Resourcepack Scaffolder
 
 This tool allows you to easily scaffold (creating the initial file directories) and
