@@ -1,3 +1,11 @@
+# V1 Complete Rewrite
+As of now, the codebase for this project has gotten a bit out of hand. As such, I will eventually (or never) start working on a complete rewrite, perhaps in another programming langguage.
+
+As part of the rewrite, here are some of my plans:
+1. Scan the minecraft jar files directly to get information about the various assets in the resource pack
+   1. While we are at it, might as well scan mod jar files to get information about their blocks and textures they might add?
+2. Thats it idk what to add anymore.
+
 # Minecraft Resourcepack Scaffolder
 
 This tool allows you to easily scaffold (creating the initial file directories) and
