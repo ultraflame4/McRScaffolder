@@ -4,10 +4,11 @@ import {program} from "commander";
 import {PrintVersion} from "./core/tools";
 import path from "path";
 import chalk from "chalk";
-import {start_menu} from "./menus/general_menus";
 import {Project} from "./core/project";
 import {create_project_menu} from "./menus/create_project";
 import watcher from "./watcher";
+import {MenuManager} from "./prompts/menu";
+import {menu_start} from "./menus/general_menus";
 
 PrintVersion()
 program.description(pkg.description)
@@ -27,7 +28,7 @@ program.command("open")
             await create_project_menu(project_path)
         }
         console.log(chalk.whiteBright("Opening project at"), chalk.greenBright(project_path))
-        await start_menu()
+        await MenuManager.show(menu_start)
     })
 
 

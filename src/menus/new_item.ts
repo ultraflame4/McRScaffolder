@@ -19,9 +19,11 @@ export async function ask_new_item() {
     ))
     if (item == null) return
 
+    const item_model = await SummaryManager.get_item_model(item.id)
+
     const spinner2 = ora("Download textures...")
     spinner2.start()
-    await AssetsManager.downloadTextures(...await SummaryManager.get_item_textures(item.id))
+    await AssetsManager.downloadTextures(...Object.values(item_model.textures))
     spinner2.succeed()
 
     return

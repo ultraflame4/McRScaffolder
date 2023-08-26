@@ -90,10 +90,15 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
     const [query, setQuery] = useState("")
     const prefix = usePrefix()
 
-    const filteredChoices = fuzzySearch(query, config.choices)
-    if (config.allowCancel) {
-        filteredChoices.push({text:"Quit", id:cancelChoiceId})
+
+    const searchResults = fuzzySearch(query, config.choices)
+    const isCommand = query.charAt(0) == ":"
+    const filteredChoices = isCommand ? [] : searchResults
+    if (config.allowCancel && (isCommand || query.length==0)) {
+        filteredChoices.push({text: "Quit / Exit", id: cancelChoiceId})
     }
+
+
     const choice = filteredChoices[cursorPosition] as ISearchListChoice;
 
     if (isComplete) {
@@ -124,6 +129,7 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
             setCursorPos(newCursorPos)
         } else {
             setQuery(rl.line)
+            setCursorPos(0)
         }
     });
 

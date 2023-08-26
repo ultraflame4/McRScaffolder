@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts open ./test",
+    "test-prompt": "tsx src/prompts/index.ts",
     "start-watch": "tsx src/index.ts watch ./test",
     "build": "tsx config.ts"
   },

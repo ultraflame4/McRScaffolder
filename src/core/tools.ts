@@ -38,7 +38,8 @@ export async function DownloadFile(url: string,dest:string):Promise<string> {
     let pathInfo = path.parse(dest)
     fs.mkdirSync(pathInfo.dir,{recursive:true})
     const dl = new DownloaderHelper(url,pathInfo.dir,{
-        fileName:pathInfo.base
+        fileName:pathInfo.base,
+        override: true
     })
     dl.on("error", err => {
         console.log(chalk.red('Download Failed'), err)

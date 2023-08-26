@@ -23,7 +23,7 @@ export class BlockModel {
         let models = await SummaryManager.get_block_models(block_id)
         return await Promise.all(
             models.map(async (x) => {
-                let textures = await SummaryManager.get_block_model_textures(x)
+                let textures = await SummaryManager.get_block_textures(x)
                 return new BlockModel(x, textures);
             })
         )

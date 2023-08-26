@@ -1,6 +1,6 @@
 import ora from "ora";
 import SummaryManager from "../resources/SummaryManager";
-import AssetManager from "../assets/AssetManager";
+import AssetManager from "../assets";
 import {Project} from "../core/project";
 import chalk from "chalk";
 import {SearchList} from "../prompts/searchlist";
