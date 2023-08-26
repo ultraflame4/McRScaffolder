@@ -4,7 +4,7 @@ import path from "path";
 import extract from "extract-zip";
 import {DownloadFile, GetVersionTag, ReadJson} from "../core/tools";
 import {ResourcesDir} from "./vars";
-import {AssetModel, ResourceName} from "../core/types";
+import {ResourceName} from "../core/types";
 import jp from "jsonpath"
 
 
@@ -38,55 +38,16 @@ class SummaryManager {
     }
 
     /**
-     * Creates a helper to read model data from the json file
-     * @param summary The summary manager instance
-     * @param model_id The model id eg. "item/coal"
-     * @return null if model does not exist
-     */
-
-    private async _read_model(model_id_str: string) {
-        let all_models = await ReadJson(this.resolve("assets", "model", "data.json"))
-        let data = all_models[model_id_str]
-        if (!data) return null
-        let textures = data["textures"] ?? {}
-        Object.keys(textures).forEach(k => {
-            textures[k] = ResourceName.fromString(textures[k] as string)
-        })
-
-        return new AssetModel(
-            ResourceName.fromString(model_id_str),
-            data["parent"],
-            textures
-        )
-    }
-
-    public async read_model(model_id: ResourceName) {
-        return await this._read_model(model_id.resource_path)
-    }
-
-    public async get_item_model(item_id: string) {
-        return await this._read_model(`item/${item_id}`)
-    }
-
-
-    /**
-     * Gets a list of all minecraft textures from the registry
-     */
-    public async read_textures(): Promise<string[]> {
-        return (await ReadJson(this.resolve("registries", "data.json")))["texture"]
-    }
-
-    /**
      * Gets a list of all minecraft items from the registry
      */
-    public async read_items(): Promise<string[]> {
+    public async get_items(): Promise<string[]> {
         return (await ReadJson(this.resolve("registries", "data.json")))["item"]
     }
 
     /**
      * Gets a list of all minecraft blocks from the registry
      */
-    public async read_blocks(): Promise<string[]> {
+    public async get_blocks(): Promise<string[]> {
         return (await ReadJson(this.resolve("registries", "data.json")))["block"]
     }
 
@@ -105,21 +66,10 @@ class SummaryManager {
         return models.map(x => ResourceName.fromString(x))
     }
 
-    public async get_block_textures(block_model: ResourceName): Promise<Record<string, ResourceName>> {
+    public async read_model(model_id: ResourceName): Promise<object> {
         let modelData = await ReadJson(this.resolve("assets", "model", "data.json"))
-        let textures: Record<string, ResourceName> = {}
-        let key = block_model.resource_path
-        let model = modelData[key]
-        // Some models no textures so we skip
-        if (!model["textures"]) {
-            return
-        }
-
-        Object.entries(model["textures"]).forEach(([k, v]) => {
-            textures[k] = ResourceName.fromString(v as string)
-        })
-
-        return textures
+        let key = model_id.resource_path
+        return modelData[key]
     }
 
 }

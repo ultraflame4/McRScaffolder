@@ -47,13 +47,19 @@ export class ResourceName {
         this.path = path;
     }
 
+    public toString(): string {
+        return `${this.namespace}:${this.resource_path}`
+    }
+
     static fromString(resource_path: string): ResourceName {
+        if (typeof resource_path != "string") return null
         if (!resource_path.includes(":")) {
             resource_path = "minecraft:" + resource_path
         }
         let a = resource_path.split(":")
         let namespace = a[0]
         let path = a[1].split("/")
+        if (path.length == 0) return null
         return new ResourceName(namespace, path)
     }
 
@@ -87,11 +93,13 @@ export class ResourceName {
      * Returns the filename for this resource name (ext not specified)
      * @param ext
      */
-    public filename(ext:string|null =null){
-        return this.path[this.path.length-1]+ext??""
+    public filename(ext: string | null = null) {
+        return this.path[this.path.length - 1] + ext ?? ""
     }
 
-    public get resource_path(){return  this.path.join("/")}
+    public get resource_path() {
+        return this.path.join("/")
+    }
 
     public toJSON() {
         return `${this.namespace}:` + this.path.join("/")
@@ -104,7 +112,7 @@ export interface ShaderResource {
 }
 
 
-export interface TextureAsset_Texture{
+export interface TextureAsset_Texture {
     /**
      * Path pointing to the albedo / color map / main texture file (relative to texture asset root)
      */
@@ -134,7 +142,7 @@ export interface TextureAsset_Texture{
     /**
      * Normal maps + other maps
      */
-    normals?:{
+    normals?: {
         /**
          * Path pointing towards to the normal map (relative to texture asset root) <br/>
          * The normal map follows DirectX's format

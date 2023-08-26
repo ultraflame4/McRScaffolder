@@ -27,6 +27,7 @@ export interface ISearchListChoice extends Record<string, any> {
      * Optional data to add to this choice
      */
     data?: object,
+    description?: string
 }
 
 export interface ISearchListOptions extends AsyncPromptConfig {
@@ -139,10 +140,10 @@ export const SearchList = createPrompt<ISearchListChoice, ISearchListOptions>((c
             return ` ${choice.separator}`;
         }
 
-        const lineId = chalk.italic(` ${choice.id}`)
+        const lineDesc = chalk.italic(` ${choice.description??choice.id}`)
         const lineTxt = choice.text ?? choice.id
         if (index == cursorPosition) {
-            return chalk.cyanBright(figureSet.pointer) + " " + chalk.greenBright(chalk.bold(lineTxt)) + chalk.dim(lineId)
+            return chalk.cyanBright(figureSet.pointer) + " " + chalk.greenBright(chalk.bold(lineTxt)) + chalk.dim(lineDesc)
         }
         return chalk.dim(`${figureSet.dot} ${lineTxt}`);
     }).join("\n")
