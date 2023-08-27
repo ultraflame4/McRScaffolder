@@ -58,9 +58,7 @@ export async function add_texture_asset(asset: ProjectTexturedAsset): Promise<Me
     })
 
     if (option == AddTextureAssetConfigOption._custom) {
-        return async (current_menu, history_text) => {
-            return await modify_texture_config(asset)
-        }
+        return async () => await modify_texture_config(asset)
     }
 
     return
