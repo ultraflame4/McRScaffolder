@@ -2,7 +2,6 @@ import {ResourceName} from "../core/types";
 import SummaryManager from "./SummaryManager";
 import {ReadJson} from "../core/tools";
 import fs from "fs";
-import {json} from "stream/consumers";
 
 export interface ResourcePackTexture {
     /**

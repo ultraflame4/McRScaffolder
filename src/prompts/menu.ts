@@ -1,6 +1,7 @@
 import {select, Separator} from "@inquirer/prompts";
 
-export type menuPromptCallback = (current_menu: IMenuStackItem, history_text: string, isRoot: boolean) => Promise<IMenuStackItem | void | boolean>
+export type MenuPromptReturn = IMenuStackItem | void | boolean
+export type MenuPromptCallback = (current_menu: IMenuStackItem, history_text: string, isRoot: boolean) => Promise<MenuPromptReturn>
 export interface IMenuConfig {
     /**
      * The title of the menu. Defaults to undefined
@@ -18,14 +19,10 @@ export interface IMenuConfig {
      * When the promise returns true, the callback is called again.
      * When returning another IMenuStackItem object, the new object becomes a sub menu, it adds to the history. Please note that this menu will be called again when going back from sub menu
      */
-    custom?: menuPromptCallback
+    custom?: MenuPromptCallback
 }
 
 interface IMenuStackItem {
-    /**
-     * The index of the option for this menu in the parent menu
-     */
-    option_index: number,
     /**
      * Config for this menu
      */
@@ -66,14 +63,13 @@ class MenuManager_ {
         }
 
         return {
-            config: current_menu_options[nextMenuIndex],
-            option_index: nextMenuIndex
+            config: current_menu_options[nextMenuIndex]
         };
     }
 
     public async show(menu_config: IMenuConfig) {
         let run = true
-        let menu_history: IMenuStackItem[] = [{config: menu_config, option_index: 0}]
+        let menu_history: IMenuStackItem[] = [{config: menu_config}]
 
 
         while (run) {
@@ -106,3 +102,6 @@ class MenuManager_ {
 }
 
 export const MenuManager = new MenuManager_()
+export function defineMenu(menu_prompt:MenuPromptCallback): MenuPromptCallback{
+    return menu_prompt
+}
