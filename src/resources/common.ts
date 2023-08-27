@@ -1,5 +1,8 @@
 import {ResourceName} from "../core/types";
 import SummaryManager from "./SummaryManager";
+import {ReadJson} from "../core/tools";
+import fs from "fs";
+import {json} from "stream/consumers";
 
 export interface ResourcePackTexture {
     /**
@@ -16,15 +19,18 @@ export interface ResourcePackTexture {
     path: ResourceName
 }
 
-export interface IResourcePackAsset{
+export interface IResourcePackAsset {
     asset_id: ResourceName
 }
 
-export interface ITextureAsset extends IResourcePackAsset{
+export interface ITextureAsset extends IResourcePackAsset {
     GetTextures(): Promise<ResourcePackTexture[]>
 }
+export interface ISaveableAsset extends IResourcePackAsset {
+    write(): Promise<void>
+}
 
-export class ResourcePackItemAsset implements ITextureAsset {
+export class ResourcePackItemAsset implements ITextureAsset, ISaveableAsset {
     asset_id: ResourceName
     model: ResourcePackModel
 
@@ -46,9 +52,18 @@ export class ResourcePackItemAsset implements ITextureAsset {
         )
     }
 
+    public exists() : boolean{
+        return this.model.exists()
+    }
+
+    async write(): Promise<void> {
+        await this.model.write()
+    }
+
 }
 
-export class ResourcePackBlockAsset implements ITextureAsset {
+export class ResourcePackBlockAsset implements ITextureAsset, ISaveableAsset {
+
     asset_id: ResourceName
     models: ResourcePackModel[]
 
@@ -60,18 +75,21 @@ export class ResourcePackBlockAsset implements ITextureAsset {
     async GetTextures(): Promise<ResourcePackTexture[]> {
         return this.models.flatMap(x => x.textures);
     }
+    async write(): Promise<void> {
+        await Promise.all(this.models.map(x=>x.write()))
+    }
 }
 
-class ResourcePackModel {
+class ResourcePackModel implements ISaveableAsset{
 
 
-    model_id: ResourceName
+    asset_id: ResourceName
     private _parent_model_id: ResourceName | null
     private _textures: ResourcePackTexture[]
     private _loaded: boolean = false
 
     constructor(model_id: ResourceName, parent_model_id: ResourceName, textures: ResourcePackTexture[], loaded: boolean = false) {
-        this.model_id = model_id;
+        this.asset_id = model_id;
         this._parent_model_id = parent_model_id;
         this._textures = textures;
         this._loaded = loaded
@@ -88,6 +106,23 @@ class ResourcePackModel {
         return this._parent_model_id;
     }
 
+    private async loadDefaults() {
+        let data = await SummaryManager.read_model(this.asset_id);
+        this._parent_model_id = ResourceName.fromString(data["parent"] as string) ?? null
+        this._textures = Object.entries(data["textures"] ?? {}).map(([k, v]) => {
+            return {
+                model_id: this.asset_id,
+                name: k,
+                path: ResourceName.fromString(v as string)
+            }
+        })
+    }
+
+    private async loadSaved() {
+        if (!this.asset_id.exists("models", ".json")) return
+        let json = await ReadJson(this.asset_id.filepath("models", ".json"))
+    }
+
     /**
      * Call this before using any attributes.
      *
@@ -97,17 +132,26 @@ class ResourcePackModel {
      */
     public async loadData(force: boolean = false) {
         if (this._loaded && !force) return
-        let data = await SummaryManager.read_model(this.model_id);
-        this._parent_model_id = ResourceName.fromString(data["parent"] as string) ?? null
-        this._textures = Object.entries(data["textures"] ?? {}).map(([k, v]) => {
-            return {
-                model_id: this.model_id,
-                name: k,
-                path: ResourceName.fromString(v as string)
-            }
-        })
-        console.log("LOADING",)
+        await this.loadDefaults() // First load default model
+        await this.loadSaved()
         this._loaded = true
+    }
+
+    public exists() : boolean{
+        return this.asset_id.exists("models",".json")
+    }
+
+    /**
+     * Writes the data into the project files
+     */
+    public async write() {
+        fs.writeFileSync(
+            this.asset_id.filepath("models", ".json"),
+            JSON.stringify({
+                parent: this.parent_model_id.toString(),
+                textures: this.textures.reduce((prev, current) => ({...prev, [current.name] : current.path.toString()}))
+            }, null, 3)
+        )
     }
 
     /**

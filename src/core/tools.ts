@@ -52,7 +52,7 @@ export async function DownloadFile(url: string,dest:string):Promise<string> {
     return dest
 }
 
-export async function ReadJson(file_path):Promise<any>{
+export async function ReadJson(file_path: string):Promise<any>{
     return JSON.parse(fs.readFileSync(file_path,{encoding:"utf-8"}))
 }
 

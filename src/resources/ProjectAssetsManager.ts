@@ -1,4 +1,4 @@
-import {ResourcePackItemAsset} from "./common";
+import {ISaveableAsset, ResourcePackItemAsset} from "./common";
 import SummaryManager from "./SummaryManager";
 
 export interface ProjectAsset<A> {
@@ -6,18 +6,19 @@ export interface ProjectAsset<A> {
     asset: A
 }
 
-
 class AssetManager_{
 
     public async get_items(): Promise<ProjectAsset<ResourcePackItemAsset>[]> {
-        let all_items: ProjectAsset<ResourcePackItemAsset>[] =
-            await Promise.all(
-                (await SummaryManager.get_items()).map( async  x=>  {
-                    return {added: false, asset: await ResourcePackItemAsset.fromItemId(x)}
-                })
-            )
+        return await Promise.all(
+            (await SummaryManager.get_items()).map(async x => {
+                let item = await ResourcePackItemAsset.fromItemId(x)
+                return {added: item.exists(), asset: item}
+            })
+        )
+    }
 
-        return all_items
+    public async save_item(item_asset: ProjectAsset<ISaveableAsset>) {
+        await item_asset.asset.write()
     }
 }
 

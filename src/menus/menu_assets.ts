@@ -18,20 +18,18 @@ export async function modify_texture_config(asset: ProjectTexturedAsset) {
     let textures = await asset.asset.GetTextures()
     let grouped = _.groupBy(textures,x=>x.model_id)
 
-    while (true){
-
-        let choices: (ISearchListChoice | Separator)[] = []
-        Object.entries(grouped).forEach(([k,v])=>{
-            choices.push(new Separator(`-----Model: ${k}-----`))
-            v.forEach(x=>{
-                choices.push({
-                    id: x.name,
-                    text: `${x.name}: "${x.path.toString()}"`,
-                    data: x
-                })
+    let choices: (ISearchListChoice | Separator)[] = []
+    Object.entries(grouped).forEach(([k,v])=>{
+        choices.push(new Separator(`-- Model: ${k} --`))
+        v.forEach(x=>{
+            choices.push({
+                id: x.name,
+                text: `${x.name}: "${x.path.toString()}"`,
+                data: x
             })
         })
-
+    })
+    while (true){
         let ans = await SearchList({
             message: `Configuring Asset ${asset.asset.asset_id.toString()} textures`,
             allowCancel: true,
@@ -42,7 +40,9 @@ export async function modify_texture_config(asset: ProjectTexturedAsset) {
 
         let tex_path = await input({message:`Texture "${data.name}" resource path`, default:data.path.toString()})
         data.path = ResourceName.fromString(tex_path)
+        ans.text = `${data.name}: "${data.path.toString()}"` // Update text
     }
+
 }
 
 export async function add_texture_asset(asset: ProjectTexturedAsset) {

@@ -1,5 +1,6 @@
 import {Project} from "./project";
 import path from "path";
+import fs from "fs";
 
 export interface McRSConfig {
     pack_name: string,
@@ -97,12 +98,24 @@ export class ResourceName {
         return this.path[this.path.length - 1] + ext ?? ""
     }
 
+    /**
+     * Returns only the path portion of the resource name in string format
+     */
     public get resource_path() {
         return this.path.join("/")
     }
 
     public toJSON() {
         return `${this.namespace}:` + this.path.join("/")
+    }
+
+    /**
+     * Checks whether this resource name exists in the project with the given context and file extension
+     * @param ctx Context - eg. "textures", "models"
+     * @param ext File extension to check for. eg. ".png"
+     */
+    public exists(ctx: string,ext?: string):boolean {
+        return fs.existsSync(this.filepath(ctx,ext))
     }
 }
 
