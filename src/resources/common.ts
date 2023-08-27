@@ -153,11 +153,17 @@ class ResourcePackModel implements ISaveableAsset{
      * Writes the data into the project files
      */
     public async write() {
+
+        let tex_ = {}
+        this.textures.forEach(x=>{
+            tex_[x.name] = x.path
+        })
+
         writeToFile(
             this.asset_id.filepath("models", ".json"),
             JSON.stringify({
                 parent: this.parent_model_id.toString(),
-                textures: this.textures.reduce((prev, current) => ({...prev, [current.name] : current.path.toString()}))
+                textures: Object.assign(tex_)
             }, null, 3)
         )
     }
