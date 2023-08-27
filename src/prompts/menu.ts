@@ -1,6 +1,6 @@
 import {select, Separator} from "@inquirer/prompts";
 
-export type menuPromptCallback = (current_menu: IMenuStackItem, history_text: string, isRoot: boolean) => Promise<IMenuStackItem | null | boolean>
+export type menuPromptCallback = (current_menu: IMenuStackItem, history_text: string, isRoot: boolean) => Promise<IMenuStackItem | void | boolean>
 export interface IMenuConfig {
     /**
      * The title of the menu. Defaults to undefined
