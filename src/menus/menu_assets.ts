@@ -3,7 +3,13 @@ import {ISearchListChoice, SearchList} from "../prompts/searchlist";
 import {ProjectAsset, ProjectAssetsManager} from "../resources/ProjectAssetsManager";
 import figureSet from "figures";
 import chalk from "chalk";
-import {ISaveableAsset, ITextureAsset, ResourcePackTexture} from "../resources/common"
+import {
+    IResourcePackAsset,
+    ISaveableAsset,
+    ITextureAsset,
+    ResourcePackItemAsset,
+    ResourcePackTexture
+} from "../resources/common"
 import {input, select, Separator} from "@inquirer/prompts";
 import _ from "lodash"
 import {ResourceName} from "../core/types";
@@ -69,6 +75,20 @@ export async function add_texture_asset(asset: ProjectTexturedAsset): Promise<Me
     return
 }
 
+function get_menu_item_desc(asset: ProjectAsset<IResourcePackAsset>): string {
+    if (asset.added) {
+        return   chalk.greenBright.italic(`Select`) +
+            chalk.dim.italic(` to `) +
+            chalk.italic("Edit ") + chalk.dim.italic(`item: `) + chalk.italic(asset.asset.asset_id)
+    }
+
+    return chalk.yellow("? Missing Asset. ") +
+        chalk.greenBright.italic(`Select`) +
+        chalk.dim.italic(` to `) +
+        chalk.whiteBright.italic(`Download & Add`) +
+        chalk.dim.italic(` to project`);
+
+}
 
 export const menu_items = defineMenu(async () => {
 
@@ -81,12 +101,7 @@ export const menu_items = defineMenu(async () => {
                     id: x.asset.asset_id.toString(),
                     text: `[${x.added ? figureSet.tick : figureSet.arrowDown}] ${x.asset.asset_id}`,
                     // description: chalk.yellow("? Missing Item. ") + `Add ${x.asset.item_id.toString()} to the project`
-                    description:
-                        chalk.yellow("? Missing Asset. ") +
-                        chalk.greenBright.italic(`Select`) +
-                        chalk.dim.italic(` to `) +
-                        chalk.whiteBright.italic(`Download & Add`) +
-                        chalk.dim.italic(` to project`),
+                    description: get_menu_item_desc(x),
                     data: x as ProjectTexturedAsset
                 }
             })
@@ -101,7 +116,7 @@ export const menu_items = defineMenu(async () => {
             return {
                 config: {
                     title: "Add Texture Asset Config",
-                    custom:  await add_texture_asset(selected_item)
+                    custom: await add_texture_asset(selected_item)
                 }
             }
         } else {
