@@ -86,6 +86,7 @@ class MenuManager_ {
                 await current_menu.config.custom(current_menu,history_text,isRoot) :
                 await this.promptMenu(current_menu,history_text,isRoot)
 
+            console.log(nextMenu)
             if (typeof nextMenu === "object" && nextMenu) {
                 menu_history.push(nextMenu)
                 continue
