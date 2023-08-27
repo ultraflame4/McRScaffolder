@@ -63,3 +63,9 @@ export function resolvePathEnvVars(path_: string) {
 export function pathIsDir(path: string) {
     return fs.existsSync(path) && fs.lstatSync(path).isDirectory()
 }
+
+export function writeToFile(path_: string, data: string) {
+    let parent = path.dirname(path_)
+    fs.mkdirSync(parent, {recursive:true})
+    fs.writeFileSync(path_,data,{encoding: "utf-8"})
+}

@@ -3,12 +3,12 @@ import {ISearchListChoice, SearchList} from "../prompts/searchlist";
 import {ProjectAsset, ProjectAssetsManager} from "../resources/ProjectAssetsManager";
 import figureSet from "figures";
 import chalk from "chalk";
-import {ITextureAsset, ResourcePackTexture} from "../resources/common"
+import {ISaveableAsset, ITextureAsset, ResourcePackTexture} from "../resources/common"
 import {input, select, Separator} from "@inquirer/prompts";
 import _ from "lodash"
 import {ResourceName} from "../core/types";
 
-export type ProjectTexturedAsset = ProjectAsset<ITextureAsset>
+export type ProjectTexturedAsset = ProjectAsset<ITextureAsset & ISaveableAsset>
 
 enum AddTextureAssetConfigOption {
     _default = "default",
@@ -96,7 +96,11 @@ export const menu_items = defineMenu(async () => {
             return {
                 config: {
                     title: "Add Texture Asset Config",
-                    custom: await add_texture_asset(selected_item)
+                    custom: async () => {
+                        await add_texture_asset(selected_item)
+                        await selected_item.asset.loadData()
+                        await selected_item.asset.write()
+                    }
                 }
             }
         } else {

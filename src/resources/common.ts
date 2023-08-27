@@ -1,7 +1,6 @@
 import {ResourceName} from "../core/types";
 import SummaryManager from "./SummaryManager";
-import {ReadJson} from "../core/tools";
-import fs from "fs";
+import {ReadJson, writeToFile} from "../core/tools";
 
 export interface ResourcePackTexture {
     /**
@@ -20,16 +19,18 @@ export interface ResourcePackTexture {
 
 export interface IResourcePackAsset {
     asset_id: ResourceName
+    loadData(force?: boolean): Promise<any>
 }
 
-export interface ITextureAsset extends IResourcePackAsset {
-    GetTextures(): Promise<ResourcePackTexture[]>
-}
 export interface ISaveableAsset extends IResourcePackAsset {
     write(): Promise<void>
 }
 
-export class ResourcePackItemAsset implements ITextureAsset, ISaveableAsset {
+export interface ITextureAsset extends ISaveableAsset {
+    GetTextures(): Promise<ResourcePackTexture[]>
+}
+
+export class ResourcePackItemAsset implements ITextureAsset {
     asset_id: ResourceName
     model: ResourcePackModel
 
@@ -59,9 +60,13 @@ export class ResourcePackItemAsset implements ITextureAsset, ISaveableAsset {
         await this.model.write()
     }
 
+    async loadData(force: boolean): Promise<void> {
+        return this.model.loadData(force)
+    }
+
 }
 
-export class ResourcePackBlockAsset implements ITextureAsset, ISaveableAsset {
+export class ResourcePackBlockAsset implements ITextureAsset {
 
     asset_id: ResourceName
     models: ResourcePackModel[]
@@ -69,6 +74,10 @@ export class ResourcePackBlockAsset implements ITextureAsset, ISaveableAsset {
     constructor(block_id: ResourceName, models: ResourcePackModel[]) {
         this.asset_id = block_id;
         this.models = models;
+    }
+
+    loadData(force: boolean): Promise<any> {
+        return Promise.all(this.models.map(x=>x.loadData(force)))
     }
 
     async GetTextures(): Promise<ResourcePackTexture[]> {
@@ -144,7 +153,7 @@ class ResourcePackModel implements ISaveableAsset{
      * Writes the data into the project files
      */
     public async write() {
-        fs.writeFileSync(
+        writeToFile(
             this.asset_id.filepath("models", ".json"),
             JSON.stringify({
                 parent: this.parent_model_id.toString(),
