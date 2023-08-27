@@ -58,9 +58,14 @@ export async function add_texture_asset(asset: ProjectTexturedAsset): Promise<Me
     })
 
     if (option == AddTextureAssetConfigOption._custom) {
-        return async () => await modify_texture_config(asset)
+        return async () => {
+            let a = await modify_texture_config(asset)
+            await asset.asset.loadData()
+            await asset.asset.write()
+            return a
+        }
     }
-
+    await asset.asset.write()
     return
 }
 
@@ -96,11 +101,7 @@ export const menu_items = defineMenu(async () => {
             return {
                 config: {
                     title: "Add Texture Asset Config",
-                    custom: async () => {
-                        await add_texture_asset(selected_item)
-                        await selected_item.asset.loadData()
-                        await selected_item.asset.write()
-                    }
+                    custom:  await add_texture_asset(selected_item)
                 }
             }
         } else {
