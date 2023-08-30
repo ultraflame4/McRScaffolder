@@ -41,7 +41,7 @@ export class ResourcePackItemAsset implements ITextureAsset {
 
     async GetTextures(): Promise<ResourcePackTexture[]> {
         await this.model.loadData()
-        return this.model.textures;
+        return this.model.GetTexturesRecursive();
     }
 
     static async fromItemId(item_id: string | ResourceName): Promise<ResourcePackItemAsset> {
@@ -53,7 +53,7 @@ export class ResourcePackItemAsset implements ITextureAsset {
     }
 
     public exists() : boolean{
-        return this.model.exists()
+        return this.model.ExistsInProject()
     }
 
     async write(): Promise<void> {
@@ -114,10 +114,28 @@ class ResourcePackModel implements ISaveableAsset{
         return this._parent_model_id;
     }
 
+    /**
+     * Gets all the textures for this model recursively from its parents
+     * @constructor
+     */
+    public async GetTexturesRecursive() {
+        let textures: ResourcePackTexture[] = this.textures
+        let parent_id = this.parent_model_id
+        while (true) {
+            if (!parent_id) break
+            let parent = await ResourcePackModel.fromModelId(parent_id)
+            await parent.loadData(true);
+            // Check if textures in parent has been overridden
+            textures=textures.concat(parent.textures.filter(t=>textures.find(x=> t.name==x.name) == undefined))
+            parent_id = parent.parent_model_id
+        }
+        return textures
+    }
+
     private async loadDefaults() {
         let data = await SummaryManager.read_model(this.asset_id);
-        this._parent_model_id = ResourceName.fromString(data["parent"] as string) ?? null
-        this._textures = Object.entries(data["textures"] ?? {}).map(([k, v]) => {
+        this._parent_model_id = ResourceName.fromString(data?.["parent"] as string) ?? null
+        this._textures = Object.entries(data?.["textures"] ?? {}).map(([k, v]) => {
             return {
                 model_id: this.asset_id,
                 name: k,
@@ -127,7 +145,7 @@ class ResourcePackModel implements ISaveableAsset{
     }
 
     private async loadSaved() {
-        if (!this.asset_id.exists("models", ".json")) return
+        if (!this.asset_id.ExistsInProject("models", ".json")) return
         let json = await ReadJson(this.asset_id.filepath("models", ".json"))
     }
 
@@ -145,8 +163,8 @@ class ResourcePackModel implements ISaveableAsset{
         this._loaded = true
     }
 
-    public exists() : boolean{
-        return this.asset_id.exists("models",".json")
+    public ExistsInProject() : boolean{
+        return this.asset_id.ExistsInProject("models",".json")
     }
 
     /**

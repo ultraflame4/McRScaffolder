@@ -114,7 +114,7 @@ export class ResourceName {
      * @param ctx Context - eg. "textures", "models"
      * @param ext File extension to check for. eg. ".png"
      */
-    public exists(ctx: string,ext?: string):boolean {
+    public ExistsInProject(ctx: string, ext?: string):boolean {
         return fs.existsSync(this.filepath(ctx,ext))
     }
 }
