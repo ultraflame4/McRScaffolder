@@ -13,12 +13,38 @@ import {
 import {input, select, Separator} from "@inquirer/prompts";
 import _ from "lodash"
 import {ResourceName} from "../core/types";
+import AssetsDownloader from "../resources/AssetsDownloader";
 
 export type ProjectTexturedAsset = ProjectAsset<ITextureAsset & ISaveableAsset>
 
-enum AddTextureAssetConfigOption {
+enum AddTextureAssetModelConfigOption {
     _default = "default",
     _custom = "custom"
+}
+enum AddTextureAssetTextureConfigOption {
+    _inherit = "inherit",
+    _custom = "custom",
+    _no_tex = "no texture"
+}
+
+export async function download_asset_textures(asset: ProjectTexturedAsset) {
+
+    if ((await asset.asset.GetTextures()).length == 0) {
+        let choice = await select<AddTextureAssetTextureConfigOption>({
+            message: "This asset does not come with a texture! (It probably inherits it from other assets)",
+            choices: [
+                {name: "Use inherited texture", value: AddTextureAssetTextureConfigOption._inherit},
+                // {name: "Create custom texture", value: AddTextureAssetTextureConfigOption._custom},
+                {name: "Continue without texture", value: AddTextureAssetTextureConfigOption._no_tex}
+            ]
+        })
+
+        if (choice == AddTextureAssetTextureConfigOption._inherit) {
+            let textures = await asset.asset.GetTexturesRecursive()
+            await AssetsDownloader.downloadTextures(...textures.map(x=>x.path))
+        }
+    }
+
 }
 
 export async function modify_texture_config(asset: ProjectTexturedAsset): Promise<MenuPromptReturn> {
@@ -54,16 +80,16 @@ export async function modify_texture_config(asset: ProjectTexturedAsset): Promis
 }
 
 export async function add_texture_asset(asset: ProjectTexturedAsset): Promise<MenuPromptCallback> {
-
-    let option = await select<AddTextureAssetConfigOption>({
+    await asset.asset.loadData(true)
+    let option = await select<AddTextureAssetModelConfigOption>({
         message: "Add Texture Asset Config",
         choices: [
-            {name: "Use Defaults", value: AddTextureAssetConfigOption._default},
-            {name: "Custom", value: AddTextureAssetConfigOption._custom}
+            {name: "Use Defaults", value: AddTextureAssetModelConfigOption._default},
+            {name: "Custom", value: AddTextureAssetModelConfigOption._custom}
         ]
     })
 
-    if (option == AddTextureAssetConfigOption._custom) {
+    if (option == AddTextureAssetModelConfigOption._custom) {
         return async () => {
             let a = await modify_texture_config(asset)
             await asset.asset.loadData()
@@ -71,7 +97,8 @@ export async function add_texture_asset(asset: ProjectTexturedAsset): Promise<Me
             return a
         }
     }
-    await asset.asset.write()
+    await download_asset_textures(asset)
+    await asset.asset.write();
     return
 }
 

@@ -28,6 +28,7 @@ export interface ISaveableAsset extends IResourcePackAsset {
 
 export interface ITextureAsset extends ISaveableAsset {
     GetTextures(): Promise<ResourcePackTexture[]>
+    GetTexturesRecursive(): Promise<ResourcePackTexture[]>
 }
 
 export class ResourcePackItemAsset implements ITextureAsset {
@@ -41,8 +42,13 @@ export class ResourcePackItemAsset implements ITextureAsset {
 
     async GetTextures(): Promise<ResourcePackTexture[]> {
         await this.model.loadData()
+        return this.model.textures;
+    }
+    async GetTexturesRecursive(): Promise<ResourcePackTexture[]> {
+        await this.model.loadData()
         return this.model.GetTexturesRecursive();
     }
+
     async GetModels(): Promise<ResourcePackTexture[]> {
         await this.model.loadData()
         return this.model.GetTexturesRecursive();
@@ -82,12 +88,17 @@ export class ResourcePackBlockAsset implements ITextureAsset {
         this.models = models;
     }
 
-    loadData(force: boolean): Promise<any> {
+    loadData(force?: boolean): Promise<any> {
         return Promise.all(this.models.map(x=>x.loadData(force)))
     }
 
     async GetTextures(): Promise<ResourcePackTexture[]> {
+        await this.loadData()
         return this.models.flatMap(x => x.textures);
+    }
+    async GetTexturesRecursive(): Promise<ResourcePackTexture[]> {
+        await this.loadData()
+        return (await Promise.all(this.models.map(x => x.GetTexturesRecursive()))).flat();
     }
     async write(): Promise<void> {
         await Promise.all(this.models.map(x=>x.write()))
