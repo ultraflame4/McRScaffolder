@@ -43,6 +43,10 @@ export class ResourcePackItemAsset implements ITextureAsset {
         await this.model.loadData()
         return this.model.GetTexturesRecursive();
     }
+    async GetModels(): Promise<ResourcePackTexture[]> {
+        await this.model.loadData()
+        return this.model.GetTexturesRecursive();
+    }
 
     static async fromItemId(item_id: string | ResourceName): Promise<ResourcePackItemAsset> {
         if (typeof item_id == "string") item_id = ResourceName.fromString(`item/${item_id}`)
@@ -57,7 +61,9 @@ export class ResourcePackItemAsset implements ITextureAsset {
     }
 
     async write(): Promise<void> {
-        await this.model.write()
+        let all_models = await this.model.GetAllRelatedModels()
+        await Promise.all(all_models.map(x=>x.write()))
+        return
     }
 
     async loadData(force: boolean): Promise<void> {
@@ -118,7 +124,7 @@ class ResourcePackModel implements ISaveableAsset{
      * Gets all the textures for this model recursively from its parents
      * @constructor
      */
-    public async GetTexturesRecursive() {
+    public async GetTexturesRecursive(): Promise<ResourcePackTexture[]> {
         let textures: ResourcePackTexture[] = this.textures
         let parent_id = this.parent_model_id
         while (true) {
@@ -130,6 +136,23 @@ class ResourcePackModel implements ISaveableAsset{
             parent_id = parent.parent_model_id
         }
         return textures
+    }
+
+    /**
+     * Gets all related models recursively from its parents (including itself)
+     * @constructor
+     */
+    public async GetAllRelatedModels(): Promise<ResourcePackModel[]> {
+        let models: ResourcePackModel[] = [this]
+        let parent_id = this.parent_model_id
+        while (true) {
+            if (!parent_id) break
+            let parent = await ResourcePackModel.fromModelId(parent_id)
+            await parent.loadData(true);
+            models.push(parent)
+            parent_id = parent.parent_model_id
+        }
+        return models
     }
 
     private async loadDefaults() {
@@ -176,12 +199,13 @@ class ResourcePackModel implements ISaveableAsset{
         this.textures.forEach(x=>{
             tex_[x.name] = x.path
         })
+        if (Object.entries(tex_).length == 0) tex_ = undefined
 
         writeToFile(
             this.asset_id.filepath("models", ".json"),
             JSON.stringify({
-                parent: this.parent_model_id.toString(),
-                textures: Object.assign(tex_)
+                parent: this.parent_model_id?.toString() ?? undefined,
+                textures: tex_
             }, null, 3)
         )
     }
